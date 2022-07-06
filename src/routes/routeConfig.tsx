@@ -1,6 +1,7 @@
 import { routePaths } from '@/const/routePaths';
 import HomePage from '@/pages/HomePage/HomePage';
 import MessengerPage from '@/pages/MessengerPage/MessengerPage';
+import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import QueriesPage from '@/pages/QueriesPage/QueriesPage';
 import QueryDetailPage from '@/pages/QueryDetailPage/QueryDetailPage';
 import SignInPage from '@/pages/SignInPage/SignInPage';
@@ -61,6 +62,12 @@ export const routerConfig: Array<RouterInterface> = [
   {
     path: routePaths.TUTOR_LIST_PAGE,
     component: TutorListPage,
+    needAuthor: true,
+    grantPermission: [],
+  },
+  {
+    path: routePaths.ABOUT_US,
+    component: NotFoundPage,
     needAuthor: true,
     grantPermission: [],
   },

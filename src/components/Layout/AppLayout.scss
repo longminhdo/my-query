@@ -16,6 +16,9 @@
       justify-content: center;
       align-items: center;
       color: $main-orange-color;
+      img {
+        transform: translateY(-2px);
+      }
 
       &:hover {
         cursor: pointer;
@@ -47,10 +50,109 @@
         font-size: 16px;
         font-weight: 700;
         color: $main-black-color;
+        position: relative;
         &:hover {
           cursor: pointer;
         }
+
+        &::after {
+          content: '';
+          position: absolute;
+          background-color: $main-orange-color;
+          height: 2.6px;
+          width: 0;
+          transform: translateX(-50%);
+          top: 72%;
+          left: 50%;
+          transition: 0.2s ease-in-out;
+        }
       }
+
+      .active {
+        &::after {
+          content: '';
+          position: absolute;
+          background-color: $main-orange-color;
+          height: 2.6px;
+          width: 100%;
+          top: 72%;
+          left: 50%;
+        }
+      }
+    }
+  }
+
+  //MOBILE
+  .app-layout-header-mobile {
+    background: $main-white-color;
+    padding: 0 20px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: rgb(0 0 0 / 50%) 0px -1px 8px;
+    height: 70px;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+  }
+}
+
+.ant-drawer-header {
+  box-shadow: rgb(0 0 0 / 50%) 0px -1px 8px;
+  height: 70px;
+  .ant-drawer-header-title .ant-drawer-title {
+    font-weight: 800;
+    font-size: 20px;
+  }
+}
+
+.ant-drawer-content .ant-drawer-body {
+  .login-btn {
+    margin: 10px 20px;
+    background: $main-green-color;
+    width: 86px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $main-white-color;
+    border-radius: 8px;
+    span {
+      font-weight: 700;
+    }
+  }
+
+  padding: 0;
+  a {
+    font-family: $poppins-font;
+    font-size: 16px;
+    font-weight: 400;
+    color: $main-black-color;
+    position: relative;
+    &:hover {
+      cursor: pointer;
+      background-color: $main-orange-color;
+    }
+  }
+
+  p {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin: 0;
+
+    &:hover {
+      cursor: pointer;
+      background-color: $main-orange-color;
+    }
+  }
+
+  .active {
+    p {
+      font-weight: 700;
+      background-color: $main-orange-color;
     }
   }
 }

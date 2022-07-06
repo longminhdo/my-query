@@ -1,11 +1,15 @@
 import { FunctionComponent, useEffect } from 'react';
 import './HomePage.scss';
-import { Row, Col } from 'antd';
+import { Row, Col, Divider } from 'antd';
+import { Icon } from '@iconify/react';
 import BackgroundImage from '@/assets/pictures/landing-img-1.jpeg';
 import Illustration1 from '@/assets/pictures/landing-illus-section-2_1.png';
 import Illustration2 from '@/assets/pictures/landing-illus-section-2_2.png';
 import Illustration3 from '@/assets/pictures/landing-illus-section-2_3.png';
 import LandingPageQuestionCard from '@/components/LandingPages/LandingPageQuestionCard/LandingPageQuestionCard';
+import { routePaths } from '@/const/routePaths';
+import { Link } from 'react-router-dom';
+import LandingPageTutorCard from '@/components/LandingPages/LandingPageTutorCard/LandingPageTutorCard';
 
 interface HomePageProps {}
 
@@ -75,7 +79,41 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
           <LandingPageQuestionCard />
           <LandingPageQuestionCard />
           <LandingPageQuestionCard />
+          <Divider
+            style={{
+              borderTopColor: '#1C1D1F',
+              color: '#1C1D1F',
+              margin: '0 0',
+            }}
+          >
+            <Link to={routePaths.QUERIES_PAGE}>
+              <div className='my-more-icon'>
+                <p style={{ marginBottom: '0', transform: 'translateY(10px)' }}>
+                  More
+                </p>
+                <Icon
+                  icon='ic:baseline-expand-more'
+                  width='36'
+                  style={{ transform: 'translateY(0px)' }}
+                />
+              </div>
+            </Link>
+          </Divider>
         </div>
+      </div>
+      <div className='fourth-section'>
+        <h1>Tutor for you</h1>
+        <Row className='fourth-section-content'>
+          <Col className='fourth-section-segment' xs={24} xl={8}>
+            <LandingPageTutorCard />
+          </Col>
+          <Col className='fourth-section-segment' xs={24} xl={8}>
+            <LandingPageTutorCard />
+          </Col>
+          <Col className='fourth-section-segment' xs={24} xl={8}>
+            <LandingPageTutorCard />
+          </Col>
+        </Row>
       </div>
     </div>
   );
