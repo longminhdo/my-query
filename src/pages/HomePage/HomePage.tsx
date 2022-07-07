@@ -103,7 +103,7 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
       </div>
       <div className='fourth-section'>
         <h1>Tutor for you</h1>
-        <Row className='fourth-section-content'>
+        <Row className='fourth-section-content' gutter={[0, 13]}>
           <Col className='fourth-section-segment' xs={24} xl={8}>
             <LandingPageTutorCard />
           </Col>
@@ -113,6 +113,26 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
           <Col className='fourth-section-segment' xs={24} xl={8}>
             <LandingPageTutorCard />
           </Col>
+          <Divider
+            style={{
+              borderTopColor: '#1C1D1F',
+              color: '#1C1D1F',
+              margin: '0 0',
+            }}
+          >
+            <Link to={routePaths.TUTOR_LIST_PAGE}>
+              <div className='my-more-icon'>
+                <p style={{ marginBottom: '0', transform: 'translateY(10px)' }}>
+                  More
+                </p>
+                <Icon
+                  icon='ic:baseline-expand-more'
+                  width='36'
+                  style={{ transform: 'translateY(0px)' }}
+                />
+              </div>
+            </Link>
+          </Divider>
         </Row>
       </div>
     </div>
