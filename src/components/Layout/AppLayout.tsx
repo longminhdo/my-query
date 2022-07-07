@@ -10,6 +10,7 @@ import {
   FacebookFilled,
   InstagramFilled,
   TwitterSquareFilled,
+  CopyrightOutlined,
 } from '@ant-design/icons';
 import { Col, Drawer, Layout, Row } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
@@ -237,6 +238,10 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
             </div>
           </Col>
         </Row>
+        <div className='footer-copyright'>
+          <CopyrightOutlined style={{ fontSize: 16, marginRight: 8 }} />
+          <span>myquery Inc. 2022 All rights reserved</span>
+        </div>
       </Footer>
     </Layout>
   );
