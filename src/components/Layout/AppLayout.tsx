@@ -1,7 +1,17 @@
 import MyQueryLogo from '@/assets/myquery-logo.svg';
+import MyQueryLogoWhite from '@/assets/myquery-logo-white.svg';
 import { routePaths } from '@/const/routePaths';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Drawer, Layout } from 'antd';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  PhoneFilled,
+  HomeFilled,
+  MailFilled,
+  FacebookFilled,
+  InstagramFilled,
+  TwitterSquareFilled,
+} from '@ant-design/icons';
+import { Col, Drawer, Layout, Row } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './AppLayout.scss';
@@ -130,7 +140,104 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
         </div>
       </Drawer>
       <Content style={{ marginTop: 70 }}>{children}</Content>
-      <Footer>Footer</Footer>
+      <Footer className='app-layout-footer'>
+        <Row className='footer-content' gutter={[24, 16]}>
+          <Col
+            className='logo-col'
+            xs={{ span: 24, order: 1 }}
+            md={{ span: 17, order: 1 }}
+            lg={{ span: 8, order: 1 }}
+          >
+            <img src={MyQueryLogoWhite} alt='' />
+            <p style={{ marginBottom: 0 }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna
+              amet, diam neque, justo, magna amet, turpis tempus sed. Est auctor
+              sit eleifend mi nulla. At donec fusce rutrum in scelerisque
+              tincidunt.{' '}
+            </p>
+          </Col>
+          <Col
+            className='footer-col'
+            xs={{ span: 14, order: 2 }}
+            md={{ span: 7, order: 2 }}
+            lg={{ span: 5, order: 2 }}
+          >
+            <b>Quick Links</b>
+            <div className='footer-col-content'>
+              <p>About us</p>
+              <p>Term and Conditions</p>
+              <p>User's Guide</p>
+              <p>Support Center</p>
+            </div>
+          </Col>
+          <Col
+            className='footer-col'
+            xs={{ span: 24, order: 4 }}
+            md={{ span: 17, order: 3 }}
+            lg={{ span: 8, order: 3 }}
+          >
+            <b>Contact us</b>
+            <div className='footer-col-content'>
+              <p>
+                <Row>
+                  <Col xs={2} md={{ span: 2 }} lg={3}>
+                    <MailFilled />
+                  </Col>
+                  <Col xs={{ span: 21 }} md={{ span: 22 }} lg={21}>
+                    <div style={{ width: 'fit-content', marginLeft: 5 }}>
+                      customer.support@myquery.com
+                    </div>
+                  </Col>
+                </Row>
+              </p>
+              <p>
+                <Row>
+                  <Col xs={2} md={{ span: 2 }} lg={3}>
+                    <PhoneFilled />
+                  </Col>
+                  <Col xs={{ span: 22 }} md={{ span: 22 }} lg={21}>
+                    <div style={{ width: 'fit-content', marginLeft: 5 }}>
+                      +84 823-232-222
+                    </div>
+                  </Col>
+                </Row>
+              </p>
+              <p>
+                <Row>
+                  <Col xs={2} md={{ span: 2 }} lg={3}>
+                    <HomeFilled />
+                  </Col>
+                  <Col xs={{ span: 21 }} md={{ span: 22 }} lg={21}>
+                    <div style={{ width: 'fit-content', marginLeft: 5 }}>
+                      Sailling Tower, 111A Pastuer Street, District 1, Ho Chi
+                      Minh City, Viet Nam
+                    </div>
+                  </Col>
+                </Row>
+              </p>
+            </div>
+          </Col>
+          <Col
+            className='footer-col'
+            xs={{ span: 10, order: 3 }}
+            md={{ span: 7, order: 4 }}
+            lg={{ span: 3, order: 4 }}
+          >
+            <b>Follow us</b>
+            <div className='footer-col-content-media'>
+              <p>
+                <FacebookFilled style={{ fontSize: 24 }} />
+              </p>
+              <p>
+                <InstagramFilled style={{ fontSize: 24 }} />
+              </p>
+              <p>
+                <TwitterSquareFilled style={{ fontSize: 24 }} />
+              </p>
+            </div>
+          </Col>
+        </Row>
+      </Footer>
     </Layout>
   );
 };
