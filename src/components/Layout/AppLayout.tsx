@@ -165,10 +165,10 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
           >
             <b>Quick Links</b>
             <div className='footer-col-content'>
-              <p>About us</p>
-              <p>Term and Conditions</p>
-              <p>User's Guide</p>
-              <p>Support Center</p>
+              <div className='content-item'>About us</div>
+              <div className='content-item'>Term and Conditions</div>
+              <div className='content-item'>User's Guide</div>
+              <div className='content-item'>Support Center</div>
             </div>
           </Col>
           <Col
@@ -179,7 +179,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
           >
             <b>Contact us</b>
             <div className='footer-col-content'>
-              <p>
+              <div className='content-item'>
                 <Row>
                   <Col xs={2} md={{ span: 2 }} lg={3}>
                     <MailFilled />
@@ -190,8 +190,8 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
                     </div>
                   </Col>
                 </Row>
-              </p>
-              <p>
+              </div>
+              <div className='content-item'>
                 <Row>
                   <Col xs={2} md={{ span: 2 }} lg={3}>
                     <PhoneFilled />
@@ -202,8 +202,8 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
                     </div>
                   </Col>
                 </Row>
-              </p>
-              <p>
+              </div>
+              <div className='content-item'>
                 <Row>
                   <Col xs={2} md={{ span: 2 }} lg={3}>
                     <HomeFilled />
@@ -215,7 +215,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
                     </div>
                   </Col>
                 </Row>
-              </p>
+              </div>
             </div>
           </Col>
           <Col

@@ -2,6 +2,7 @@
 
 .app-layout {
   .app-layout-header {
+    color: $main-black-color;
     background: $main-white-color;
     padding: 0 20px;
     margin: 0;
@@ -10,8 +11,11 @@
     justify-content: space-between;
     box-shadow: rgb(0 0 0 / 50%) 0px -1px 8px;
     height: 70px;
+    padding-left: calc((100vw - 1356px) / 2);
+    padding-right: calc((100vw - 1356px) / 2);
 
     .logo {
+      margin-left: 38px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -26,6 +30,7 @@
     }
 
     .header-sections {
+      margin-right: 38px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -82,6 +87,12 @@
     }
   }
 
+  .ant-layout-content {
+    color: $main-black-color;
+    position: relative;
+    width: 100%;
+  }
+
   .app-layout-footer {
     background-color: $dark-blue-color-2;
     padding-top: 40px;
@@ -92,7 +103,7 @@
     position: relative;
 
     .footer-content {
-      margin-bottom: 40px;
+      margin-bottom: 60px;
       width: 90%;
       max-width: 900px;
 
@@ -112,7 +123,7 @@
             margin-top: 5px;
           }
 
-          p {
+          .content-item {
             margin: 0;
 
             span {
@@ -171,6 +182,7 @@
 
   //MOBILE
   .app-layout-header-mobile {
+    color: $main-black-color;
     background: $main-white-color;
     padding: 0 20px;
     margin: 0;
@@ -186,6 +198,7 @@
 }
 
 .ant-drawer-header {
+  color: $main-black-color;
   box-shadow: rgb(0 0 0 / 50%) 0px -1px 8px;
   height: 70px;
   .ant-drawer-header-title .ant-drawer-title {
@@ -195,6 +208,7 @@
 }
 
 .ant-drawer-content .ant-drawer-body {
+  color: $main-black-color;
   .login-btn {
     margin: 10px 20px;
     background: $main-green-color;
