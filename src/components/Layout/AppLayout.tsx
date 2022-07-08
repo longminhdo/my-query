@@ -96,7 +96,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
           </div>
         </Header>
       ) : (
-        <Header className='app-layout-header-mobile' hasSider>
+        <Header className='app-layout-header-mobile'>
           <MenuUnfoldOutlined
             onClick={showDrawer}
             style={{ fontSize: 20, color: '#1c1d1f !important' }}
@@ -148,8 +148,13 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
             xs={{ span: 24, order: 1 }}
             md={{ span: 17, order: 1 }}
             lg={{ span: 8, order: 1 }}
+            style={{ transform: 'translateY(-3px)' }}
           >
-            <img src={MyQueryLogoWhite} alt='' />
+            <img
+              src={MyQueryLogoWhite}
+              alt=''
+              style={{ transform: 'translateY(-7px)' }}
+            />
             <p style={{ marginBottom: 0 }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna
               amet, diam neque, justo, magna amet, turpis tempus sed. Est auctor

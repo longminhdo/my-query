@@ -1,14 +1,25 @@
 import '@/App.scss';
 import AppLayout from '@/components/Layout/AppLayout';
 import MyRoutes from '@/routes/MyRoutes';
-import { BrowserRouter } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 
 function App() {
+  const Wrapper = ({ children }: any) => {
+    const location = useLocation();
+    useLayoutEffect(() => {
+      document.documentElement.scrollTo(0, 0);
+    }, [location.pathname]);
+    return children;
+  };
+
   return (
     <BrowserRouter>
-      <AppLayout>
-        <MyRoutes />
-      </AppLayout>
+      <Wrapper>
+        <AppLayout>
+          <MyRoutes />
+        </AppLayout>
+      </Wrapper>
     </BrowserRouter>
   );
 }
