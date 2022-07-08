@@ -1,12 +1,13 @@
+import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
 import QueriesPageQuestionCard from '@/components/QuestionCard/QueriesPageQuestionCard';
-import { Icon } from '@iconify/react';
+import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
 import { FormOutlined, SettingOutlined } from '@ant-design/icons';
+import { Icon } from '@iconify/react';
 import {
   Button,
   Col,
   Divider,
   Drawer,
-  DrawerProps,
   Form,
   Input,
   Modal,
@@ -23,8 +24,6 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import './QueriesPage.scss';
-import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
-import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
 
 interface QueriesPageProps {}
 
