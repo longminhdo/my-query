@@ -1,5 +1,5 @@
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
-import TutorListPageTutorCard from '@/components/TutorCard/TutorListPageTutorCard';
+import TutorListPageTutorCard from '@/components/TutorListPage/TutorListPageTutorCard';
 import { SettingOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import {

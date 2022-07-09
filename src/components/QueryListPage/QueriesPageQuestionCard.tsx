@@ -1,6 +1,7 @@
 import QuestionTag from '@/components/CategoryTag/CategoryTag';
 import { Divider } from 'antd';
 import { FunctionComponent } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './QueriesPageQuestionCard.scss';
 
 interface QueriesPageQuestionCardProps {}
@@ -8,12 +9,20 @@ interface QueriesPageQuestionCardProps {}
 const QueriesPageQuestionCard: FunctionComponent<
   QueriesPageQuestionCardProps
 > = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const handleOnClick = () => {
-    //navigate to
+    navigate(`${location.pathname}/id`, { replace: true });
+  };
+
+  const handleCardClick = () => {
+    if (window.innerWidth < 800) {
+      navigate(`${location.pathname}/id`, { replace: true });
+    }
   };
 
   return (
-    <div className='queries-page-question-card'>
+    <div className='queries-page-question-card' onClick={handleCardClick}>
       <div className='question-card-header'>
         <h2 className='card-title' onClick={handleOnClick}>
           Title

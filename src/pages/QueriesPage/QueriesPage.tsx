@@ -1,5 +1,5 @@
 import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
-import QueriesPageQuestionCard from '@/components/QuestionCard/QueriesPageQuestionCard';
+import QueriesPageQuestionCard from '@/components/QueryListPage/QueriesPageQuestionCard';
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
 import { FormOutlined, SettingOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
