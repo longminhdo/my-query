@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons';
 import { Col, Drawer, Layout, Row } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './AppLayout.scss';
 
 interface AppLayoutProps {
@@ -24,6 +24,7 @@ interface AppLayoutProps {
 const { Header, Content, Footer } = Layout;
 
 const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
+  const location = useLocation();
   const [visible, setVisible] = useState(false);
   const [, setReload] = useState(false);
   const getWindowSize = () => {
@@ -63,7 +64,10 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     setVisible(false);
   };
 
-  return (
+  return location.pathname === '/sign-in' ||
+    location.pathname === '/sign-up' ? (
+    <Content style={{}}>{children}</Content>
+  ) : (
     <Layout className='app-layout'>
       {windowSize.innerWidth > 768 ? (
         <Header

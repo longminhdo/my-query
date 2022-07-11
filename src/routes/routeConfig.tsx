@@ -30,6 +30,12 @@ export const routerConfig: Array<RouterInterface> = [
     grantPermission: [],
   },
   {
+    path: routePaths.SIGN_UP_PAGE,
+    component: SignUpPage,
+    needAuthor: true,
+    grantPermission: [],
+  },
+  {
     path: routePaths.HOME,
     component: SignUpPage,
     needAuthor: true,

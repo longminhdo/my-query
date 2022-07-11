@@ -28,7 +28,12 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
   const [formSearch] = Form.useForm();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (window.innerWidth < 768) {
+      return false;
+    }
+    return true;
+  });
   const [, setReload] = useState(false);
 
   /**

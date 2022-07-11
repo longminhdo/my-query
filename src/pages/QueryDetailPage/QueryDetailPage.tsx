@@ -11,7 +11,12 @@ interface QueryDetailPageProps {}
 const QueryDetailPage: FunctionComponent<QueryDetailPageProps> = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formAnswer] = Form.useForm();
-  const [isDesktop, setIsDesktop] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (window.innerWidth < 768) {
+      return false;
+    }
+    return true;
+  });
   const [, setReload] = useState(false);
 
   const getWindowSize = () => {
