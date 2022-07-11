@@ -31,6 +31,21 @@
 </head>
 
 <body>
+  <script>
+    function _calculateScrollbarWidth() {
+      document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px");
+    }
+    window.addEventListener('resize', _calculateScrollbarWidth, false);
+
+    document.addEventListener('DOMContentLoaded', _calculateScrollbarWidth, false);
+
+    window.addEventListener('load', _calculateScrollbarWidth);
+
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  </script>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <!--
