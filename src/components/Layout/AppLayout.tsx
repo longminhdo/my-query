@@ -225,7 +225,9 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
               <Link
                 to={`/${user?.id}`}
                 className={`logged-in-item-mobile profile ${
-                  location.pathname.substring(1) === user?.id ? 'active' : null
+                  location.pathname.substring(1) === user?.id
+                    ? 'active-mobile'
+                    : null
                 }`}
                 onClick={() => {
                   setVisible(false);
