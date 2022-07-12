@@ -1,6 +1,7 @@
 import Dots from '@/assets/pictures/dots.png';
 import SignInPageIllus from '@/assets/pictures/login-illus-1.png';
-import { Checkbox, Divider, Form, Input } from 'antd';
+import { login } from '@/services/auth.service';
+import { Checkbox, Divider, Form, Input, message } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignInPage.scss';
@@ -18,6 +19,37 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
     return true;
   });
   const [, setReload] = useState(false);
+  const [formSignIn] = Form.useForm();
+
+  useEffect(() => {
+    if (window.localStorage.getItem('myQueryToken')) {
+      return navigate('/', { replace: true });
+    }
+  }, [navigate]);
+
+  const loginHandler = async (v: any) => {
+    // navigate('/', { replace: true });
+    // return console.log(v);
+    const res = await login({
+      email: v.username,
+      password: v.password,
+      registry_by: 'email',
+    });
+
+    const data = res.data;
+
+    if (res?.status === 400) {
+      return message.error(res.data.message);
+    }
+
+    if (data.status_code === 1) {
+      localStorage.setItem('myQueryToken', data?.data[0]?.access_token);
+      localStorage.setItem('userId', data?.data[0]?.user_id);
+      message.success('Success!');
+      navigate('/', { replace: true });
+    }
+  };
+
   const getWindowSize = () => {
     const { innerWidth, innerHeight } = window;
     return { innerWidth, innerHeight };
@@ -61,6 +93,8 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
             className='main-form'
             layout={'vertical'}
             labelCol={{ style: { fontWeight: 700 } }}
+            form={formSignIn}
+            onFinish={loginHandler}
           >
             <b>Welcome</b>
             <Item
@@ -84,8 +118,14 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
             >
               <Checkbox style={{ marginLeft: 2 }}>Remember me</Checkbox>
             </Form.Item>
-
-            <div className='sign-in-btn'>Sign In</div>
+            <div
+              className='sign-in-btn'
+              onClick={() => {
+                formSignIn.submit();
+              }}
+            >
+              Sign In
+            </div>
             <div className='forgot-password'>Forgot your password?</div>
             <Divider />
             <div className='sign-up-navigation'>
@@ -108,6 +148,8 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
             className='main-form'
             layout={'vertical'}
             labelCol={{ style: { fontWeight: 700 } }}
+            form={formSignIn}
+            onFinish={loginHandler}
           >
             <b>Welcome</b>
             <Item
@@ -131,8 +173,14 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
             >
               <Checkbox style={{ marginLeft: 2 }}>Remember me</Checkbox>
             </Form.Item>
-
-            <div className='sign-in-btn'>Sign In</div>
+            <div
+              className='sign-in-btn'
+              onClick={() => {
+                formSignIn.submit();
+              }}
+            >
+              Sign In
+            </div>
             <div className='forgot-password'>Forgot your password?</div>
             <Divider />
             <div className='sign-up-navigation'>

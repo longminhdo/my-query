@@ -1,20 +1,23 @@
-import MyQueryLogo from '@/assets/myquery-logo.svg';
 import MyQueryLogoWhite from '@/assets/myquery-logo-white.svg';
+import MyQueryLogo from '@/assets/myquery-logo.svg';
+import MyAvatar from '@/components/MyAvatar/MyAvatar';
 import { routePaths } from '@/const/routePaths';
+import { getUser } from '@/services/auth.service';
 import {
+  CopyrightOutlined,
+  FacebookFilled,
+  HomeFilled,
+  InstagramFilled,
+  MailFilled,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PhoneFilled,
-  HomeFilled,
-  MailFilled,
-  FacebookFilled,
-  InstagramFilled,
   TwitterSquareFilled,
-  CopyrightOutlined,
 } from '@ant-design/icons';
-import { Col, Drawer, Layout, Row } from 'antd';
+import { Icon } from '@iconify/react';
+import { Col, Divider, Drawer, Layout, Popover, Row } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './AppLayout.scss';
 
 interface AppLayoutProps {
@@ -24,6 +27,8 @@ interface AppLayoutProps {
 const { Header, Content, Footer } = Layout;
 
 const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
+  const [user, setUser] = useState<any>();
+  const navigate = useNavigate();
   const location = useLocation();
   const [visible, setVisible] = useState(false);
   const [, setReload] = useState(false);
@@ -31,6 +36,25 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     const { innerWidth, innerHeight } = window;
     return { innerWidth, innerHeight };
   };
+  const [popoverVisible, setPopoverVisible] = useState(false);
+
+  useEffect(() => {
+    setPopoverVisible(false);
+    const getMyUser = async () => {
+      const userId = window.localStorage.getItem('userId');
+      if (userId) {
+        const res = await getUser(userId);
+        const data = res?.data;
+        console.log(data);
+        if (data?.status_code === 1) {
+          setUser(data?.data[0]);
+        }
+      }
+    };
+
+    getMyUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.localStorage.getItem('userId')]);
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
 
@@ -64,6 +88,39 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     setVisible(false);
   };
 
+  const handleSignOut = () => {
+    window.localStorage.removeItem('userId');
+    window.localStorage.removeItem('myQueryToken');
+    setUser(null);
+  };
+
+  const popoverContent = (
+    <div className='popover-content'>
+      <div
+        className='popover-content-item profile'
+        onClick={() => {
+          setPopoverVisible(false);
+          navigate(`/${user?.id}`, { replace: true });
+          // console.log(user);
+        }}
+      >
+        <Icon icon='carbon:user-avatar' style={{ fontSize: 20 }} />
+        <span>Profile</span>
+      </div>
+      <Divider style={{ margin: 0 }} />
+      <div
+        className='popover-content-item sign-out-btn'
+        onClick={handleSignOut}
+      >
+        Sign Out
+      </div>
+    </div>
+  );
+
+  const handleVisibleChange = (newVisible: boolean) => {
+    setPopoverVisible(newVisible);
+  };
+
   return location.pathname === '/sign-in' ||
     location.pathname === '/sign-up' ? (
     <Content style={{}}>{children}</Content>
@@ -92,11 +149,30 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
             <NavLink to={routePaths.ABOUT_US} className='section-item'>
               About us
             </NavLink>
-            <Link to={routePaths.SIGN_IN_PAGE}>
-              <div className='login-btn'>
-                <span>Sign In</span>
-              </div>
-            </Link>
+            {!user ? (
+              <Link to={routePaths.SIGN_IN_PAGE}>
+                <div className='login-btn'>
+                  <span>Sign In</span>
+                </div>
+              </Link>
+            ) : (
+              <Popover
+                trigger='click'
+                placement='bottomLeft'
+                content={popoverContent}
+                style={{ zIndex: 2 }}
+                destroyTooltipOnHide
+                visible={popoverVisible}
+                onVisibleChange={handleVisibleChange}
+              >
+                <button
+                  style={{ background: 'white', border: 'none' }}
+                  onClick={() => setPopoverVisible(true)}
+                >
+                  <MyAvatar size={40} imgUrl={user?.avatar} />
+                </button>
+              </Popover>
+            )}
           </div>
         </Header>
       ) : (
@@ -128,20 +204,57 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
         destroyOnClose
       >
         <div className='header-sections-mobile'>
-          <NavLink to={routePaths.QUERIES_PAGE}>
+          <NavLink
+            to={routePaths.QUERIES_PAGE}
+            onClick={() => setVisible(false)}
+          >
             <p className='section-item-mobile'>Query</p>
           </NavLink>
-          <NavLink to={routePaths.TUTOR_LIST_PAGE}>
+          <NavLink
+            to={routePaths.TUTOR_LIST_PAGE}
+            onClick={() => setVisible(false)}
+          >
             <p className='section-item-mobile'>Tutor Market</p>
           </NavLink>
-          <NavLink to={routePaths.ABOUT_US}>
+          <NavLink to={routePaths.ABOUT_US} onClick={() => setVisible(false)}>
             <p className='section-item-mobile'>About us</p>
           </NavLink>
-          <Link to={routePaths.SIGN_IN_PAGE}>
-            <div className='login-btn'>
-              <span>Sign In</span>
+          {user ? (
+            <div>
+              <Divider style={{ margin: 14 }} />
+              <Link
+                to={`/${user?.id}`}
+                className={`logged-in-item-mobile profile ${
+                  location.pathname.substring(1) === user?.id ? 'active' : null
+                }`}
+                onClick={() => {
+                  setVisible(false);
+                }}
+              >
+                <Icon icon='carbon:user-avatar' style={{ fontSize: 20 }} />
+                <span>Profile</span>
+              </Link>
+
+              <div
+                className='logged-in-item-mobile sign-out-btn'
+                onClick={() => {
+                  setVisible(false);
+                  handleSignOut();
+                }}
+              >
+                Sign Out
+              </div>
             </div>
-          </Link>
+          ) : (
+            <Link
+              to={routePaths.SIGN_IN_PAGE}
+              style={{ transform: 'translateX(-5px)' }}
+            >
+              <div className='login-btn'>
+                <span>Sign In</span>
+              </div>
+            </Link>
+          )}
         </div>
       </Drawer>
       <Content style={{ marginTop: 70 }}>{children}</Content>
