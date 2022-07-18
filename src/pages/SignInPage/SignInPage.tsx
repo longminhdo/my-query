@@ -28,8 +28,6 @@ const SignInPage: FunctionComponent<SignInPageProps> = () => {
   }, [navigate]);
 
   const loginHandler = async (v: any) => {
-    // navigate('/', { replace: true });
-    // return console.log(v);
     const res = await login({
       email: v.username,
       password: v.password,

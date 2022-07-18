@@ -1,15 +1,30 @@
+import usePermission from '@/hooks/useAccountType';
 import CategoryTag from '@/components/CategoryTag/CategoryTag';
+import PayPal from '@/components/PayPalButton/PayPalButton';
+import { getUserBalance } from '@/services/wallet.service';
 import { Icon } from '@iconify/react';
-import { Col, Divider, Form, Input, Modal, Row, Select } from 'antd';
+import {
+  Col,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+} from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { FunctionComponent, useEffect, useState } from 'react';
-import './TutorDetailPage.scss';
+import './UserDetailPage.scss';
 
-interface TutorDetailPageProps {}
+interface UserDetailPageProps {}
 
 const { Item } = Form;
 
-const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
+const UserDetailPage: FunctionComponent<UserDetailPageProps> = () => {
+  const [deposit, setDeposit] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDepositModalVisible, setIsDepositModalVisible] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => {
     if (window.innerWidth < 768) {
       return false;
@@ -19,6 +34,11 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
   const [, setReload] = useState(false);
   const [formRent] = Form.useForm();
   const [rentingMethod, setRentingMethod] = useState();
+  const checkRole = usePermission();
+  const [balance, setBalance] = useState(125000);
+  const tranSuccess = async (payment: any) => {
+    console.log(payment);
+  };
 
   const getWindowSize = () => {
     const { innerWidth, innerHeight } = window;
@@ -26,6 +46,26 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
   };
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
+
+  // useEffect(() => {
+  //   const getAccountType = async () => {
+  //     const res = await checkRole();
+
+  //     console.log(res);
+  //   };
+
+  //   getAccountType();
+  // }, [checkRole]);
+
+  useEffect(() => {
+    const getBalance = async () => {
+      const res = await getUserBalance();
+      if (res?.status === 200) {
+        setBalance(res?.data);
+      }
+    };
+    getBalance();
+  }, []);
 
   useEffect(() => {
     if (windowSize.innerWidth < 994) {
@@ -69,8 +109,16 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
     setRentingMethod(v);
   };
 
+  const handleDepositOk = () => {
+    setIsDepositModalVisible(false);
+  };
+
+  const handleDepositCancel = () => {
+    setIsDepositModalVisible(false);
+  };
+
   return (
-    <Row className='tutor-detail-page' gutter={[10, 10]}>
+    <Row className='user-detail-page' gutter={[10, 10]}>
       <Modal
         title='RENT TUTOR'
         visible={isModalVisible}
@@ -117,7 +165,7 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
           </Item>
         </Form>
       </Modal>
-      <Col className='tutor-detail-page-main' lg={{ span: 18 }}>
+      <Col className='user-detail-page-main' lg={{ span: 18 }}>
         <div className='card basic-user-info' style={{ padding: 0 }}>
           <img
             src='https://thumbs.dreamstime.com/b/portrait-smiling-school-teacher-holding-books-classroom-77909586.jpg'
@@ -142,21 +190,23 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
           </div>
         </div>
         {isDesktop ? null : (
-          <div className='card rent-mobile'>
-            <b className='title'>Tutor rental</b>
-            <div className='btn-field'>
-              <div className='btn rent-btn' onClick={showModal}>
-                Rent
-              </div>
-              <div className='btn chat-btn'>
-                <Icon
-                  icon='bxs:message'
-                  style={{ transform: 'translateY(1px)' }}
-                />
-                Chat
+          <>
+            <div className='card rent-mobile'>
+              <b className='title'>Tutor rental</b>
+              <div className='btn-field'>
+                <div className='btn rent-btn' onClick={showModal}>
+                  Rent
+                </div>
+                <div className='btn chat-btn'>
+                  <Icon
+                    icon='bxs:message'
+                    style={{ transform: 'translateY(1px)' }}
+                  />
+                  Chat
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
         <div className='card highlights'>
           <b className='title'>Highlights</b>
@@ -189,9 +239,19 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
             cum.
           </div>
         </div>
+
+        <div className='card feedbacks'>
+          <b className='title'>Feedback</b>
+          <div className='feedbacks-content'></div>
+        </div>
       </Col>
       {isDesktop ? (
         <Col className='tutor-detail-page-sider' lg={{ span: 6 }}>
+          <div className='card'>
+            <b className='title'>
+              Update Profile <EditOutlined />
+            </b>
+          </div>
           <div className='card'>
             <b className='title'>Tutor rental</b>
             <div className='btn-field'>
@@ -207,10 +267,66 @@ const TutorDetailPage: FunctionComponent<TutorDetailPageProps> = () => {
               </div>
             </div>
           </div>
+          <div className='card'>
+            <b className='title'>Wallet</b>
+            <div className='wallet-balance'>
+              {balance} <span>VNĐ</span>
+            </div>
+            <div className='wallet-deposit'>
+              <div
+                className='wallet-deposit-item'
+                onClick={() => {
+                  setIsDepositModalVisible(true);
+                }}
+              >
+                Deposit
+              </div>
+              <Divider type='vertical' style={{ height: 30, margin: 0 }} />
+              <div className='wallet-deposit-item'>Withdraw</div>
+            </div>
+            <Modal
+              title='Deposit'
+              visible={isDepositModalVisible}
+              onOk={handleDepositOk}
+              onCancel={handleDepositCancel}
+              footer={null}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              destroyOnClose
+            >
+              <InputNumber
+                addonAfter='VNĐ'
+                placeholder='Deposit amount'
+                style={{ marginBottom: 20, width: '100%' }}
+                onChange={(v: any) => {
+                  setDeposit(v);
+                }}
+              />
+              <PayPal total={deposit} tranSuccess={tranSuccess} />
+            </Modal>
+          </div>
+          <div className='card'>
+            <b className='title'>Contact</b>
+            <div className='btn-field'>
+              <div className='btn chat-btn'>
+                <Icon
+                  icon='bxs:message'
+                  style={{ transform: 'translateY(1px)' }}
+                />
+                Chat
+              </div>
+            </div>
+          </div>
+          <div className='card'>
+            <b className='title'>People also visit tutors</b>
+          </div>
         </Col>
       ) : null}
     </Row>
   );
 };
 
-export default TutorDetailPage;
+export default UserDetailPage;

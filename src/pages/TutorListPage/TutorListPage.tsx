@@ -1,5 +1,6 @@
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
 import TutorListPageTutorCard from '@/components/TutorListPage/TutorListPageTutorCard';
+import { getAllTags } from '@/services/query.service';
 import { SettingOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import {
@@ -35,6 +36,19 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
     return true;
   });
   const [, setReload] = useState(false);
+  const [tags, setTags] = useState();
+
+  useEffect(() => {
+    const fetchTag = async () => {
+      const res = await getAllTags();
+      if (res?.data?.status_code === 1) {
+        console.log(res?.data?.data);
+        setTags(res?.data?.data);
+      }
+    };
+
+    fetchTag();
+  }, []);
 
   /**
    * Drawers handle in MOBILE responsive
@@ -195,7 +209,7 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
             <div className='filter-by-property'>
               <b>Filter </b>
               <div className='filter-by-property-list'>
-                <TagsDropDown form={formSearch} />
+                <TagsDropDown form={formSearch} tags={tags} />
               </div>
             </div>
           </Col>
@@ -379,7 +393,7 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
             </Select.Option>
           </Select>
         </Form.Item>
-        <TagsDropDown form={formSearch} label='Tags:' />
+        <TagsDropDown form={formSearch} label='Tags:' tags={tags} />
       </Drawer>
     </Form>
   );

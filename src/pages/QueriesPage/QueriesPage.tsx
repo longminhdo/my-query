@@ -1,6 +1,7 @@
 import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
 import QueriesPageQuestionCard from '@/components/QueryListPage/QueriesPageQuestionCard';
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
+import { getAllPosts, getAllTags } from '@/services/query.service';
 import { FormOutlined, SettingOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import {
@@ -15,6 +16,7 @@ import {
   PaginationProps,
   Row,
   Select,
+  Skeleton,
   Space,
 } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
@@ -32,6 +34,7 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
   const [formSearch] = Form.useForm();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => {
     if (window.innerWidth < 768) {
       return false;
@@ -39,6 +42,43 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
     return true;
   });
   const [, setReload] = useState(false);
+  const [tags, setTags] = useState();
+  const [posts, setPosts] = useState<any>();
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    try {
+      const fetchTag = async () => {
+        const res = await getAllTags();
+        if (res?.data?.status_code === 1) {
+          console.log(res?.data?.data);
+          setTags(res?.data?.data);
+        }
+      };
+
+      const fetchPost = async () => {
+        const startTime = new Date().getTime();
+        const res = await getAllPosts();
+        if (res?.data?.status_code === 1) {
+          const data = res?.data?.data;
+          setPosts(data);
+        }
+        const currentTime = new Date().getTime();
+        const diffTime = Math.abs(currentTime - startTime);
+        if (diffTime < 500) {
+          await new Promise((r) => setTimeout(r, 500 - diffTime));
+        }
+
+        setIsLoading(false);
+      };
+
+      fetchTag();
+      fetchPost();
+    } catch (error) {
+      setIsLoading(false);
+    }
+  }, []);
 
   /**
    * Drawers handle in MOBILE responsive
@@ -205,7 +245,7 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             <div className='filter-by-property'>
               <b>Filter </b>
               <div className='filter-by-property-list'>
-                <TagsDropDown form={formSearch} />
+                <TagsDropDown form={formSearch} tags={tags} />
               </div>
             </div>
           </Col>
@@ -217,7 +257,7 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             footer={null}
             onCancel={handleCancel}
           >
-            <CreateQueryModal />
+            <CreateQueryModal tags={tags} />
           </Modal>
           <div className='queries-page-content-header'>
             <div className='new-query-btn' onClick={showModal}>
@@ -316,19 +356,22 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             </div>
           )}
 
-          <div className='queries-page-content-main'>
-            <QueriesPageQuestionCard />
-            <QueriesPageQuestionCard />
-            <QueriesPageQuestionCard />
-            <QueriesPageQuestionCard />
-            <Pagination
-              showSizeChanger
-              onShowSizeChange={onShowSizeChange}
-              defaultCurrent={1}
-              total={500}
-              className={'content-main-pagination'}
-            />
-          </div>
+          {isLoading ? (
+            <Skeleton active />
+          ) : (
+            <div className='queries-page-content-main'>
+              {posts?.map((post: any) => {
+                return <QueriesPageQuestionCard post={post} key={post.id} />;
+              })}
+              <Pagination
+                showSizeChanger
+                onShowSizeChange={onShowSizeChange}
+                defaultCurrent={1}
+                total={posts?.length}
+                className={'content-main-pagination'}
+              />
+            </div>
+          )}
         </Col>
         {isDesktop ? (
           <Col className='queries-page-recommendation' lg={{ span: 5 }}>
@@ -432,7 +475,7 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             </Select.Option>
           </Select>
         </Form.Item>
-        <TagsDropDown form={formSearch} label='Tags:' />
+        <TagsDropDown form={formSearch} label='Tags:' tags={tags} />
       </Drawer>
     </Form>
   );

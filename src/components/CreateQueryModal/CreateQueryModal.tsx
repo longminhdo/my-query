@@ -5,11 +5,15 @@ import { Form, Input } from 'antd';
 import { FunctionComponent, useState } from 'react';
 import './CreateQueryModal.scss';
 
-interface CreateQueryModalProps {}
+interface CreateQueryModalProps {
+  tags?: any;
+}
 
 const { Item } = Form;
 
-const CreateQueryModal: FunctionComponent<CreateQueryModalProps> = () => {
+const CreateQueryModal: FunctionComponent<CreateQueryModalProps> = ({
+  tags,
+}) => {
   const [formCreate] = Form.useForm();
   const [isTagSelectVisible, setIsTagSelectVisible] = useState(false);
   const [isUploadMediaShown, setIsUploadMediaShown] = useState(false);
@@ -40,7 +44,9 @@ const CreateQueryModal: FunctionComponent<CreateQueryModalProps> = () => {
           ></Input.TextArea>
         </Item>
 
-        {isTagSelectVisible ? <TagsDropDown form={formCreate} /> : null}
+        {isTagSelectVisible ? (
+          <TagsDropDown form={formCreate} tags={tags} />
+        ) : null}
 
         {isUploadMediaShown ? <MyUploadImage form={formCreate} /> : null}
 

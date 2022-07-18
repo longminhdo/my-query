@@ -37,6 +37,12 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     return { innerWidth, innerHeight };
   };
   const [popoverVisible, setPopoverVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (window.innerWidth < 768) {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     setPopoverVisible(false);
@@ -45,7 +51,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
       if (userId) {
         const res = await getUser(userId);
         const data = res?.data;
-        console.log(data);
+
         if (data?.status_code === 1) {
           setUser(data?.data[0]);
         }
@@ -53,16 +59,16 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     };
 
     getMyUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.localStorage.getItem('userId')]);
+  }, [location.pathname]);
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
 
   useEffect(() => {
-    if (windowSize.innerWidth < 768) {
-      setReload((prev) => !prev);
+    if (windowSize.innerWidth < 830) {
+      setIsDesktop(false);
     } else {
-      setVisible(false);
+      setIsDesktop(true);
+      setReload((prev) => !prev);
     }
   }, [windowSize]);
 
@@ -121,12 +127,13 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     setPopoverVisible(newVisible);
   };
 
-  return location.pathname === '/sign-in' ||
-    location.pathname === '/sign-up' ? (
+  return location.pathname === routePaths.SIGN_IN_PAGE ||
+    location.pathname === routePaths.SIGN_UP_PAGE ||
+    location.pathname === routePaths.COMPLETE_PROFILE ? (
     <Content style={{}}>{children}</Content>
   ) : (
     <Layout className='app-layout'>
-      {windowSize.innerWidth > 768 ? (
+      {isDesktop ? (
         <Header
           className='app-layout-header'
           style={{ position: 'fixed', zIndex: 1, width: '100%' }}
@@ -145,6 +152,9 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
             </NavLink>
             <NavLink to={routePaths.TUTOR_LIST_PAGE} className='section-item'>
               Tutor Market
+            </NavLink>
+            <NavLink to={routePaths.MESSENGER} className='section-item'>
+              Messenger
             </NavLink>
             <NavLink to={routePaths.ABOUT_US} className='section-item'>
               About us
@@ -166,7 +176,11 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
                 onVisibleChange={handleVisibleChange}
               >
                 <button
-                  style={{ background: 'white', border: 'none' }}
+                  style={{
+                    background: 'white',
+                    border: 'none',
+                    marginLeft: 20,
+                  }}
                   onClick={() => setPopoverVisible(true)}
                 >
                   <MyAvatar size={40} imgUrl={user?.avatar} />

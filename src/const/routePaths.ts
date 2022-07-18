@@ -8,4 +8,5 @@ export const routePaths = {
   TUTOR_LIST_PAGE: '/tutor',
   TUTOR_DETAIL_PAGE: '/:id',
   ABOUT_US: '/about-us',
+  COMPLETE_PROFILE: '/complete-profile',
 };

@@ -17,3 +17,13 @@ declare module '*.svg' {
   const value: any;
   export default value;
 }
+
+declare module '*.gif' {
+  const value: any;
+  export default value;
+}
+
+declare module 'react-paypal-express-checkout' {
+  const value: any;
+  export default value;
+}

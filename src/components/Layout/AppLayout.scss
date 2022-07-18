@@ -34,7 +34,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 35px;
+      gap: 15px;
 
       .login-btn {
         background: $main-green-color;
@@ -48,6 +48,7 @@
         span {
           font-weight: 700;
         }
+        margin-left: 20px;
       }
 
       .section-item {
@@ -92,6 +93,7 @@
     color: $main-black-color;
     position: relative;
     width: 100%;
+    min-height: calc(100vh - 70px - 318px);
   }
 
   .app-layout-footer {

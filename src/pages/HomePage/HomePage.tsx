@@ -1,5 +1,4 @@
 import { FunctionComponent, useEffect } from 'react';
-import './HomePage.scss';
 import { Row, Col, Divider } from 'antd';
 import { Icon } from '@iconify/react';
 import BackgroundImage from '@/assets/pictures/landing-img-1.jpeg';
@@ -8,16 +7,39 @@ import Illustration2 from '@/assets/pictures/landing-illus-section-2_2.png';
 import Illustration3 from '@/assets/pictures/landing-illus-section-2_3.png';
 import LandingPageQuestionCard from '@/components/LandingPages/LandingPageQuestionCard/LandingPageQuestionCard';
 import { routePaths } from '@/const/routePaths';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import LandingPageTutorCard from '@/components/LandingPages/LandingPageTutorCard/LandingPageTutorCard';
+import './HomePage.scss';
 
 interface HomePageProps {}
 
 const HomePage: FunctionComponent<HomePageProps> = () => {
-  useEffect(() => {
-    //fetch 3 popular queries
-    //fetch 3 popular question
-  }, []);
+  const navigate = useNavigate();
+  // useEffect(() => {
+  //   const myUserId = localStorage.getItem('userId');
+  //   const myToken = localStorage.getItem('myQueryToken');
+
+  //   if (myToken && myUserId) {
+  //     getUser(myUserId).then((res) => {
+  //       const data = res?.data?.data[0];
+  //       console.log(data);
+  //       if (
+  //         !data.account_type ||
+  //         !data?.first_name ||
+  //         !data?.last_name ||
+  //         !data?.gender ||
+  //         !data?.phone ||
+  //         !data?.dob
+  //       ) {
+  //         navigate(routePaths.COMPLETE_PROFILE);
+  //       }
+  //     });
+  //   } else {
+  //     if (locationPath === routePaths.MESSENGER) {
+  //       navigate(routePaths.SIGN_IN_PAGE, { replace: true });
+  //     }
+  //   }
+  // }, []);
 
   return (
     <div className='home-page'>
@@ -36,8 +58,28 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
           <h2>Join with us now!</h2>
           <h1>You are...</h1>
           <div className='first-section-buttons'>
-            <div className='first-section-btn'>Student</div>
-            <div className='first-section-btn'>Tutor</div>
+            <div
+              className='first-section-btn'
+              onClick={() => {
+                localStorage.setItem('accountType', 'student');
+                if (!localStorage.getItem('myQueryToken')) {
+                  navigate(routePaths.SIGN_UP_PAGE, { replace: true });
+                }
+              }}
+            >
+              Student
+            </div>
+            <div
+              className='first-section-btn'
+              onClick={() => {
+                localStorage.setItem('accountType', 'tutor');
+                if (!localStorage.getItem('myQueryToken')) {
+                  navigate(routePaths.SIGN_UP_PAGE, { replace: true });
+                }
+              }}
+            >
+              Tutor
+            </div>
           </div>
         </div>
       </div>

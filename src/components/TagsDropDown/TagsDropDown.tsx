@@ -7,22 +7,17 @@ import './TagsDropDown.scss';
 interface TagsDropDownProps {
   form: FormInstance;
   label?: string;
+  tags: any;
 }
 
 const TagsDropDown: FunctionComponent<TagsDropDownProps> = ({
   form,
   label,
+  tags,
 }) => {
-  const options = [
-    { value: 'math' },
-    { value: 'calculus' },
-    { value: 'java' },
-    { value: 'javascript' },
-    { value: 'integral' },
-    { value: 'algebra' },
-    { value: 'probability' },
-    { value: 'discrete' },
-  ];
+  const options = tags?.map((t: any) => {
+    return { value: t.type };
+  });
 
   const tagRender = (props: CustomTagProps) => {
     const { label, closable, onClose } = props;
@@ -46,7 +41,7 @@ const TagsDropDown: FunctionComponent<TagsDropDownProps> = ({
   return (
     <Form.Item name={'tagDropDown'} label={label} labelCol={{ span: 24 }}>
       <Select
-        clearIcon={label ? false : true}
+        // clearIcon={label ? false : true}
         placeholder={'Tags'}
         mode='multiple'
         showArrow

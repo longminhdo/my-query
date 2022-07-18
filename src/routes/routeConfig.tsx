@@ -1,4 +1,5 @@
 import { routePaths } from '@/const/routePaths';
+import CompleteProfilePage from '@/pages/CompleteProfilePage/CompleteProfilePage';
 import HomePage from '@/pages/HomePage/HomePage';
 import MessengerPage from '@/pages/MessengerPage/MessengerPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
@@ -6,7 +7,7 @@ import QueriesPage from '@/pages/QueriesPage/QueriesPage';
 import QueryDetailPage from '@/pages/QueryDetailPage/QueryDetailPage';
 import SignInPage from '@/pages/SignInPage/SignInPage';
 import SignUpPage from '@/pages/SignUpPage/SignUpPage';
-import TutorDetailPage from '@/pages/TutorDetailPage/TutorDetailPage';
+import TutorDetailPage from '@/pages/TutorDetailPage/UserDetailPage';
 import TutorListPage from '@/pages/TutorListPage/TutorListPage';
 
 export interface RouterInterface {
@@ -74,6 +75,12 @@ export const routerConfig: Array<RouterInterface> = [
   {
     path: routePaths.ABOUT_US,
     component: NotFoundPage,
+    needAuthor: true,
+    grantPermission: [],
+  },
+  {
+    path: routePaths.COMPLETE_PROFILE,
+    component: CompleteProfilePage,
     needAuthor: true,
     grantPermission: [],
   },
