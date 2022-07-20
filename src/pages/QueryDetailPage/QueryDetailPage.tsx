@@ -1,15 +1,26 @@
-import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
 import QueryAnswerCard from '@/components/QueryAnswerCard/QueryAnswerCard';
 import QueryDetailPageQuestionCard from '@/components/QueryDetailPage/QueryDetailPageQuestionCard';
+import { NO_PERMISSION_WARNING } from '@/const/const';
+import {
+  addComment,
+  getAllCommentByPost,
+  searchQueryById,
+} from '@/services/query.service';
+import {
+  calculateDate,
+  getUserIdFromLocalStorage,
+  sortByDate,
+} from '@/utils/utils';
 import { FormOutlined, MessageOutlined } from '@ant-design/icons';
-import { Col, Divider, Form, Input, Modal, Row } from 'antd';
+import { Col, Divider, Form, Input, message, Row } from 'antd';
+import moment from 'moment';
 import { FunctionComponent, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './QueryDetailPage.scss';
 
 interface QueryDetailPageProps {}
 
 const QueryDetailPage: FunctionComponent<QueryDetailPageProps> = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [formAnswer] = Form.useForm();
   const [isDesktop, setIsDesktop] = useState(() => {
     if (window.innerWidth < 768) {
@@ -18,6 +29,49 @@ const QueryDetailPage: FunctionComponent<QueryDetailPageProps> = () => {
     return true;
   });
   const [, setReload] = useState(false);
+  const location = useLocation();
+  const [query, setQuery] = useState<any>();
+  const [isPostOwner, setIsPostOwner] = useState<boolean>(false);
+  const currentUserId = getUserIdFromLocalStorage();
+  const [comments, setComments] = useState([]);
+  const isSignedIn = currentUserId ? true : false;
+  const postId = location.pathname.split('/')[2];
+  const navigate = useNavigate();
+  console.log(query);
+  useEffect(() => {
+    fetchQuery();
+    fetchComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!query) {
+      return;
+    }
+
+    if (query.user_id === currentUserId) {
+      setIsPostOwner(true);
+    }
+  }, [currentUserId, query]);
+
+  const fetchComments = async () => {
+    const id = location.pathname.split('/')[2];
+    const res = await getAllCommentByPost(id);
+
+    if (res?.data?.status_code === 1) {
+      const sortedData = sortByDate(res?.data?.data, 'newest');
+      setComments(sortedData);
+    }
+  };
+
+  const fetchQuery = async () => {
+    const id = location.pathname.split('/')[2];
+    const res = await searchQueryById(id);
+
+    if (res?.data?.status_code === 1) {
+      setQuery(res?.data?.data[0]);
+    }
+  };
 
   const getWindowSize = () => {
     const { innerWidth, innerHeight } = window;
@@ -49,79 +103,105 @@ const QueryDetailPage: FunctionComponent<QueryDetailPageProps> = () => {
 
   /************** */
 
-  /**
-   * Start new query handle
-   */
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-  /**
-   * End new query handle
-   */
+  const handleFormAnswerFinish = async (v: any) => {
+    const data = {
+      post_id: postId,
+      content: v.queryAnswer,
+      created_at: String(moment().unix()),
+    };
 
-  /************** */
+    const res = await addComment(data, localStorage.getItem('myQueryToken'));
 
-  const handleFormAnswerFinish = (v: any) => {
-    console.log(v);
+    if (res?.data?.status_code === 1) {
+      formAnswer.resetFields();
+      fetchComments();
+    }
   };
 
   return (
     <Row className='query-detail-page' gutter={[20, 15]} justify={'center'}>
       <Col className='query-detail-page-content' lg={{ span: 18 }}>
-        <Modal
-          title='New Query'
-          visible={isModalVisible}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <CreateQueryModal />
-        </Modal>
         <div className='query-detail-page-content-header'>
           <div className='user-card-info'>
-            <img
-              src='https://thumbs.dreamstime.com/b/portrait-smiling-school-teacher-holding-books-classroom-77909586.jpg'
-              alt=''
-            />
+            <img src={query?.user?.avatar} alt='' />
             <div className='info-detail'>
-              <b className='info-detail-name'>Ana</b>
-              <span className='info-detail-date'>June 23, 2022</span>
+              <b
+                className='info-detail-name'
+                onClick={() => {
+                  navigate(`/${query?.user_id}`);
+                }}
+              >
+                {query?.user?.last_name} {query?.user?.first_name}
+              </b>
+              <span className='info-detail-date'>
+                {calculateDate(query?.created_at)}
+              </span>
             </div>
           </div>
 
           <div className='user-card-statistic'>
             <div className='user-card-statistic-item'>
-              <b>43</b>
+              <b>{query?.comments}</b>
               <span>Answers</span>
             </div>
             <div className='user-card-statistic-item'>
-              <b>222</b>
+              <b>
+                {String(
+                  query?.upvote_list?.length - query?.downvote_list?.length
+                )}
+              </b>
               <span>Votes</span>
             </div>
             <div className='user-card-statistic-item'>
-              <b>2</b>
-              <span>Stared</span>
+              <b>{query?.user_saved_list?.length}</b>
+              <span>Starred</span>
             </div>
           </div>
         </div>
 
         <div className='query-detail-page-content-main'>
-          <QueryDetailPageQuestionCard />
+          <QueryDetailPageQuestionCard
+            data={query}
+            fetchQuery={fetchQuery}
+            isPostOwner={isPostOwner}
+          />
           <Form
             className='answer-field'
             form={formAnswer}
             onFinish={handleFormAnswerFinish}
             layout={'vertical'}
           >
-            <Form.Item name={'queryAnswer'} label={'Your Answer'}>
+            <Form.Item
+              name={'queryAnswer'}
+              label={'Your Answer'}
+              rules={[
+                {
+                  validator: (_, v) => {
+                    if (!v) {
+                      return Promise.reject(
+                        new Error('You cannot leave this field empty.')
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
               <Input.TextArea
                 autoSize
                 style={{ minHeight: 100 }}
               ></Input.TextArea>
             </Form.Item>
-            <div className='btn answer-btn' onClick={() => formAnswer.submit()}>
+            <div
+              className='btn answer-btn'
+              onClick={() => {
+                if (localStorage.getItem('myQueryToken')) {
+                  formAnswer.submit();
+                } else {
+                  message.warning(NO_PERMISSION_WARNING);
+                }
+              }}
+            >
               <MessageOutlined />
               Answer it
             </div>
@@ -131,12 +211,16 @@ const QueryDetailPage: FunctionComponent<QueryDetailPageProps> = () => {
           </Divider>
 
           <div className='answer-list'>
-            <QueryAnswerCard />
-            <QueryAnswerCard />
-            <QueryAnswerCard />
-            <QueryAnswerCard />
-            <QueryAnswerCard />
-            <QueryAnswerCard />
+            {comments?.map((c: any) => (
+              <QueryAnswerCard
+                key={c.id}
+                content={c.content}
+                createdAt={c.created_at}
+                id={c.id}
+                postId={c.post_id}
+                userId={c.user_id}
+              />
+            ))}
           </div>
         </div>
       </Col>

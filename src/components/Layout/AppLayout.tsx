@@ -1,8 +1,10 @@
 import MyQueryLogoWhite from '@/assets/myquery-logo-white.svg';
 import MyQueryLogo from '@/assets/myquery-logo.svg';
 import MyAvatar from '@/components/MyAvatar/MyAvatar';
+import { DEFAULT_AVATAR } from '@/const/const';
 import { routePaths } from '@/const/routePaths';
 import { getUser } from '@/services/auth.service';
+
 import {
   CopyrightOutlined,
   FacebookFilled,
@@ -43,6 +45,16 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
     }
     return true;
   });
+
+  useEffect(() => {
+    if (
+      !localStorage.getItem('myQueryToken') &&
+      location.pathname === routePaths.MESSENGER
+    ) {
+      navigate(routePaths.SIGN_IN_PAGE, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, navigate, localStorage.getItem('myQueryToken')]);
 
   useEffect(() => {
     setPopoverVisible(false);
@@ -97,6 +109,8 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
   const handleSignOut = () => {
     window.localStorage.removeItem('userId');
     window.localStorage.removeItem('myQueryToken');
+    window.localStorage.removeItem('chatToken');
+    window.location.reload();
     setUser(null);
   };
 
@@ -107,7 +121,6 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
         onClick={() => {
           setPopoverVisible(false);
           navigate(`/${user?.id}`, { replace: true });
-          // console.log(user);
         }}
       >
         <Icon icon='carbon:user-avatar' style={{ fontSize: 20 }} />
@@ -126,6 +139,163 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
   const handleVisibleChange = (newVisible: boolean) => {
     setPopoverVisible(newVisible);
   };
+
+  if (location.pathname === routePaths.MESSENGER) {
+    return (
+      <Layout className='app-layout'>
+        {isDesktop ? (
+          <Header
+            className='app-layout-header'
+            style={{ position: 'fixed', zIndex: 1, width: '100%' }}
+          >
+            <div className='logo'>
+              <Link
+                to={routePaths.HOME}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <img src={MyQueryLogo} alt='' height={62} />
+              </Link>
+            </div>
+            <div className='header-sections'>
+              <NavLink to={routePaths.QUERIES_PAGE} className='section-item'>
+                Query
+              </NavLink>
+              <NavLink to={routePaths.TUTOR_LIST_PAGE} className='section-item'>
+                Tutor Market
+              </NavLink>
+              <NavLink to={routePaths.MESSENGER} className='section-item'>
+                Messenger
+              </NavLink>
+              <NavLink to={routePaths.ABOUT_US} className='section-item'>
+                About us
+              </NavLink>
+              {!user ? (
+                <Link to={routePaths.SIGN_IN_PAGE}>
+                  <div className='login-btn'>
+                    <span>Sign In</span>
+                  </div>
+                </Link>
+              ) : (
+                <Popover
+                  trigger='click'
+                  placement='bottomLeft'
+                  content={popoverContent}
+                  style={{ zIndex: 2 }}
+                  destroyTooltipOnHide
+                  visible={popoverVisible}
+                  onVisibleChange={handleVisibleChange}
+                >
+                  <button
+                    style={{
+                      background: 'white',
+                      border: 'none',
+                      marginLeft: 20,
+                    }}
+                    onClick={() => setPopoverVisible(true)}
+                  >
+                    <MyAvatar
+                      size={40}
+                      imgUrl={user?.avatar ? user?.avatar : DEFAULT_AVATAR}
+                    />
+                  </button>
+                </Popover>
+              )}
+            </div>
+          </Header>
+        ) : (
+          <Header className='app-layout-header-mobile'>
+            <MenuUnfoldOutlined
+              onClick={showDrawer}
+              style={{ fontSize: 20, color: '#1c1d1f !important' }}
+            />
+            <div className='logo' style={{ transform: 'translateX(-5px)' }}>
+              <Link
+                to={routePaths.HOME}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <img src={MyQueryLogo} alt='' height={62} />
+              </Link>
+            </div>
+            <span></span>
+          </Header>
+        )}
+        <Drawer
+          title='Menu'
+          placement='left'
+          onClose={onClose}
+          visible={visible}
+          width={'75%'}
+          closeIcon={
+            <MenuFoldOutlined style={{ fontSize: 20, color: '#1c1d1f' }} />
+          }
+          destroyOnClose
+        >
+          <div className='header-sections-mobile'>
+            <NavLink
+              to={routePaths.QUERIES_PAGE}
+              onClick={() => setVisible(false)}
+            >
+              <p className='section-item-mobile'>Query</p>
+            </NavLink>
+            <NavLink
+              to={routePaths.TUTOR_LIST_PAGE}
+              onClick={() => setVisible(false)}
+            >
+              <p className='section-item-mobile'>Tutor Market</p>
+            </NavLink>
+            <NavLink
+              to={routePaths.MESSENGER}
+              onClick={() => setVisible(false)}
+            >
+              <p className='section-item-mobile'> Messenger</p>
+            </NavLink>
+            <NavLink to={routePaths.ABOUT_US} onClick={() => setVisible(false)}>
+              <p className='section-item-mobile'>About us</p>
+            </NavLink>
+            {user ? (
+              <div>
+                <Divider style={{ margin: 14 }} />
+                <Link
+                  to={`/${user?.id}`}
+                  className={`logged-in-item-mobile profile ${
+                    location.pathname.substring(1) === user?.id
+                      ? 'active-mobile'
+                      : null
+                  }`}
+                  onClick={() => {
+                    setVisible(false);
+                  }}
+                >
+                  <Icon icon='carbon:user-avatar' style={{ fontSize: 20 }} />
+                  <span>Profile</span>
+                </Link>
+
+                <div
+                  className='logged-in-item-mobile sign-out-btn'
+                  onClick={() => {
+                    setVisible(false);
+                    handleSignOut();
+                  }}
+                >
+                  Sign Out
+                </div>
+              </div>
+            ) : (
+              <Link
+                to={routePaths.SIGN_IN_PAGE}
+                style={{ transform: 'translateX(-5px)' }}
+              >
+                <div className='login-btn'>
+                  <span>Sign In</span>
+                </div>
+              </Link>
+            )}
+          </div>
+        </Drawer>
+        <Content style={{ marginTop: 70 }}>{children}</Content>
+      </Layout>
+    );
+  }
 
   return location.pathname === routePaths.SIGN_IN_PAGE ||
     location.pathname === routePaths.SIGN_UP_PAGE ||
@@ -183,7 +353,10 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
                   }}
                   onClick={() => setPopoverVisible(true)}
                 >
-                  <MyAvatar size={40} imgUrl={user?.avatar} />
+                  <MyAvatar
+                    size={40}
+                    imgUrl={user?.avatar ? user?.avatar : DEFAULT_AVATAR}
+                  />
                 </button>
               </Popover>
             )}
@@ -229,6 +402,9 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
             onClick={() => setVisible(false)}
           >
             <p className='section-item-mobile'>Tutor Market</p>
+          </NavLink>
+          <NavLink to={routePaths.MESSENGER} onClick={() => setVisible(false)}>
+            <p className='section-item-mobile'> Messenger</p>
           </NavLink>
           <NavLink to={routePaths.ABOUT_US} onClick={() => setVisible(false)}>
             <p className='section-item-mobile'>About us</p>

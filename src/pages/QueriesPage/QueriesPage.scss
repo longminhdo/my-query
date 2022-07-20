@@ -206,6 +206,10 @@
     align-items: center;
   }
 
+  .ant-input-affix-wrapper-focused {
+    z-index: 0;
+  }
+
   .ant-select-selector {
     border-color: rgba(204, 204, 204, 0.5) !important;
     box-shadow: none !important;

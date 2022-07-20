@@ -4,12 +4,7 @@ import { routePaths } from '@/const/routePaths';
 import MyRoutes from '@/routes/MyRoutes';
 import { getUser } from '@/services/auth.service';
 import { useEffect, useLayoutEffect } from 'react';
-import {
-  BrowserRouter,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 
 function App() {
   const Wrapper = ({ children }: any) => {
@@ -25,8 +20,8 @@ function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-      const myUserId = localStorage.getItem('userId');
-      const myToken = localStorage.getItem('myQueryToken');
+      const myUserId = localStorage.getItem("userId");
+      const myToken = localStorage.getItem("myQueryToken");
 
       if (myToken && myUserId) {
         getUser(myUserId).then((res) => {

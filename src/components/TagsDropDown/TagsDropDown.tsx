@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react';
 import './TagsDropDown.scss';
 
 interface TagsDropDownProps {
-  form: FormInstance;
+  form?: FormInstance;
   label?: string;
   tags: any;
 }
@@ -30,7 +30,10 @@ const TagsDropDown: FunctionComponent<TagsDropDownProps> = ({
         color={'gold'}
         onMouseDown={onPreventMouseDown}
         closable={closable}
-        onClose={onClose}
+        onClose={() => {
+          form?.submit();
+          onClose();
+        }}
         style={{ marginRight: 3, borderRadius: 4 }}
       >
         {label}
@@ -49,15 +52,16 @@ const TagsDropDown: FunctionComponent<TagsDropDownProps> = ({
         style={{ width: '100%' }}
         options={options}
         allowClear
-        onBlur={() => !label && form.submit()}
-        onClear={() => !label && form.submit()}
+        onBlur={() => !label && form?.submit()}
+        onClear={() => !label && form?.submit()}
         suffixIcon={
           <Icon
+            // onClick={() => !label && form?.submit()}
             icon='fluent:tag-16-regular'
             style={{
               color: '#b5b5b5',
-              fontSize: 16,
-              transform: `${label ? 'translateX(2px)' : 'translateX(-3px)'}`,
+              fontSize: 17,
+              transform: `${label ? 'translateX(1px)' : 'translateX(-3px)'}`,
             }}
           />
         }

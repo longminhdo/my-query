@@ -1,8 +1,21 @@
 import CreateQueryModal from '@/components/CreateQueryModal/CreateQueryModal';
+import NoData from '@/components/NoData/NoData';
 import QueriesPageQuestionCard from '@/components/QueryListPage/QueriesPageQuestionCard';
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
-import { getAllPosts, getAllTags } from '@/services/query.service';
-import { FormOutlined, SettingOutlined } from '@ant-design/icons';
+import { NO_PERMISSION_WARNING } from '@/const/const';
+import {
+  getAllPosts,
+  getAllSavedPosts,
+  getAllTags,
+  getQueriesByUserId,
+  searchQuery
+} from '@/services/query.service';
+import { sortByDate, sortByVote } from '@/utils/utils';
+import {
+  CloseCircleFilled,
+  FormOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import {
   Button,
@@ -11,19 +24,20 @@ import {
   Drawer,
   Form,
   Input,
+  message,
   Modal,
   Pagination,
   PaginationProps,
   Row,
   Select,
   Skeleton,
-  Space,
+  Space
 } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
 import {
   createSearchParams,
   useNavigate,
-  useSearchParams,
+  useSearchParams
 } from 'react-router-dom';
 import './QueriesPage.scss';
 
@@ -41,44 +55,94 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
     }
     return true;
   });
-  const [, setReload] = useState(false);
+  const [reload, setReload] = useState(false);
   const [tags, setTags] = useState();
+  const [params] = useSearchParams();
   const [posts, setPosts] = useState<any>();
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchTag = async () => {
+      const res = await getAllTags();
 
-    try {
-      const fetchTag = async () => {
-        const res = await getAllTags();
-        if (res?.data?.status_code === 1) {
-          console.log(res?.data?.data);
-          setTags(res?.data?.data);
-        }
-      };
+      if (res?.data?.status_code === 1) {
+        setTags(res?.data?.data);
+      }
+    };
 
-      const fetchPost = async () => {
-        const startTime = new Date().getTime();
-        const res = await getAllPosts();
-        if (res?.data?.status_code === 1) {
-          const data = res?.data?.data;
-          setPosts(data);
-        }
-        const currentTime = new Date().getTime();
-        const diffTime = Math.abs(currentTime - startTime);
-        if (diffTime < 500) {
-          await new Promise((r) => setTimeout(r, 500 - diffTime));
-        }
+    fetchTag();
+  }, []);
+
+  useEffect(() => {
+    if (params.get('query') === 'saved-queries') {
+      fetchSavedPosts();
+      return;
+    }
+
+    if (params.get('query') === 'my-queries') {
+      fetchPostByUserId(localStorage.getItem('userId') as string);
+
+      return;
+    }
+
+    navigate(
+      {
+        search: createSearchParams({
+          query: 'all',
+        }).toString(),
+      },
+      { replace: true }
+    );
+    fetchPost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, params, reload]);
+
+  const fetchPostByUserId = async (userId: string) => {
+    if (userId) {
+      const res = await getQueriesByUserId(userId);
+
+      if (res?.data?.status_code === 1) {
+        searchWithSort(res?.data?.data);
 
         setIsLoading(false);
-      };
-
-      fetchTag();
-      fetchPost();
-    } catch (error) {
+      }
+    } else {
+      setPosts([]);
       setIsLoading(false);
     }
-  }, []);
+  };
+
+  const fetchSavedPosts = async () => {
+    const startTime = new Date().getTime();
+    const myToken = localStorage.getItem('myQueryToken');
+    const res = await getAllSavedPosts(myToken as string);
+
+    if (res?.data?.status_code === 1) {
+      searchWithSort(res?.data?.data);
+    }
+    const currentTime = new Date().getTime();
+    const diffTime = Math.abs(currentTime - startTime);
+    if (diffTime < 500) {
+      await new Promise((r) => setTimeout(r, 500 - diffTime));
+    }
+
+    setIsLoading(false);
+  };
+
+  const fetchPost = async () => {
+    const startTime = new Date().getTime();
+    const res = await getAllPosts();
+    if (res?.data?.status_code === 1) {
+      const data = res?.data?.data;
+      searchWithSort(data);
+    }
+    const currentTime = new Date().getTime();
+    const diffTime = Math.abs(currentTime - startTime);
+    if (diffTime < 500) {
+      await new Promise((r) => setTimeout(r, 500 - diffTime));
+    }
+
+    setIsLoading(false);
+  };
 
   /**
    * Drawers handle in MOBILE responsive
@@ -128,8 +192,57 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
    * Start top filter handle
    * @param values
    */
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+
+  const handleSearch = async (values: any) => {
+    // const currParams = params.get('query');
+    // if (currParams === 'saved-queries') {
+    //   fetchSavedPosts().then(() => {
+    //     const tagsArr = values?.tagDropDown;
+    //     // console.log(posts.tags, tagsArr);
+    //     const searchTitle = String(values?.searchQuery).toLowerCase();
+    //     const newArr = posts?.filter((p: any) => {
+    //       if (p?.title.toLowerCase().includes(searchTitle)) {
+    //         return true;
+    //       }
+    //       return false;
+    //     });
+    //     // console.log(newArr);
+    //     searchWithSort(newArr);
+    //   });
+    //   return;
+    // }
+
+    // if (currParams === 'my-queries') {
+    //   fetchPostByUserId(localStorage.getItem('userId') as string);
+    //   const tagsArr = values?.tagDropDown;
+    //   // console.log(posts.tags, tagsArr);
+    //   const searchTitle = String(values?.searchQuery).toLowerCase();
+    //   const newArr = posts?.filter((p: any) => {
+    //     if (
+    //       p?.title.toLowerCase().includes(searchTitle) &&
+    //       hasSubArray(posts.tags || [], tagsArr || [])
+    //     ) {
+    //       return true;
+    //     }
+    //     return false;
+    //   });
+    //   console.log(posts);
+    //   // searchWithSort(newArr);
+
+    //   return;
+    // }
+
+    const body = {
+      search_str: values?.searchQuery ? [values?.searchQuery] : null,
+      filter_tags: values?.tagDropDown,
+    };
+
+    const res = await searchQuery(body);
+    if (res?.data?.status_code === 1) {
+      const data = res?.data?.data;
+
+      searchWithSort(data);
+    }
   };
 
   const handleSearchKeyUp = (event: any) => {
@@ -141,9 +254,61 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
     }
   };
 
-  const handleSortOnChange = (v: any) => {
+  const searchWithSort = (arr: any) => {
+    const v = formSearch.getFieldValue('sortQuery');
+
+    if (!v) {
+      setPosts([...arr]);
+    }
+
+    if (v === 'newest') {
+      const sortedList = sortByDate(arr, 'newest');
+      setPosts([...sortedList]);
+    }
+
+    if (v === 'oldest') {
+      const sortedList = sortByDate(arr, 'oldest');
+      setPosts([...sortedList]);
+    }
+
+    if (v === 'vote-des') {
+      const sortedList = sortByVote(arr, 'des');
+      setPosts([...sortedList]);
+    }
+
+    if (v === 'vote-asc') {
+      const sortedList = sortByVote(arr, 'asc');
+      setPosts([...sortedList]);
+    }
+  };
+
+  const handleSortOnChange = () => {
     if (isDesktop) {
-      formSearch.submit();
+      if (posts?.length < 1) {
+        return;
+      }
+
+      const v = formSearch.getFieldValue('sortQuery');
+
+      if (v === 'newest') {
+        const sortedList = sortByDate(posts, 'newest');
+        setPosts([...sortedList]);
+      }
+
+      if (v === 'oldest') {
+        const sortedList = sortByDate(posts, 'oldest');
+        setPosts([...sortedList]);
+      }
+
+      if (v === 'vote-des') {
+        const sortedList = sortByVote(posts, 'des');
+        setPosts([...sortedList]);
+      }
+
+      if (v === 'vote-asc') {
+        const sortedList = sortByVote(posts, 'asc');
+        setPosts([...sortedList]);
+      }
     }
   };
   /**
@@ -203,7 +368,7 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
    */
 
   return (
-    <Form form={formSearch} onFinish={onFinish}>
+    <Form form={formSearch} onFinish={handleSearch}>
       <Row className='queries-page' gutter={[20, 15]} justify={'center'}>
         {isDesktop ? (
           <Col className='queries-page-filter' lg={{ span: 5 }}>
@@ -250,24 +415,49 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             </div>
           </Col>
         ) : null}
-        <Col className='queries-page-content' lg={{ span: 14 }}>
+        <Col
+          className='queries-page-content'
+          xs={{ span: 24 }}
+          lg={{ span: 14 }}
+        >
           <Modal
             title='New Query'
             visible={isModalVisible}
             footer={null}
             onCancel={handleCancel}
+            destroyOnClose={true}
           >
-            <CreateQueryModal tags={tags} />
+            <CreateQueryModal
+              tags={tags}
+              callback={setReload}
+              closeModal={setIsModalVisible}
+            />
           </Modal>
           <div className='queries-page-content-header'>
-            <div className='new-query-btn' onClick={showModal}>
+            <div
+              className='new-query-btn'
+              onClick={() => {
+                if (localStorage.getItem('myQueryToken')) {
+                  showModal();
+                } else {
+                  message.warning(NO_PERMISSION_WARNING);
+                }
+              }}
+            >
               New Query
             </div>
             <div className={'search-query-form'}>
               <Form.Item name={'searchQuery'}>
                 <Input
                   placeholder='Search query'
-                  allowClear
+                  allowClear={{
+                    clearIcon: (
+                      <CloseCircleFilled
+                        onClick={handleSearch}
+                        style={{ fontSize: 14, transform: 'translateY(5%)' }}
+                      />
+                    ),
+                  }}
                   onKeyUp={(e) => handleSearchKeyUp(e)}
                 />
               </Form.Item>
@@ -360,9 +550,13 @@ const QueriesPage: FunctionComponent<QueriesPageProps> = () => {
             <Skeleton active />
           ) : (
             <div className='queries-page-content-main'>
-              {posts?.map((post: any) => {
-                return <QueriesPageQuestionCard post={post} key={post.id} />;
-              })}
+              {posts?.length > 0 ? (
+                posts?.map((post: any) => {
+                  return <QueriesPageQuestionCard post={post} key={post.id} />;
+                })
+              ) : (
+                <NoData />
+              )}
               <Pagination
                 showSizeChanger
                 onShowSizeChange={onShowSizeChange}

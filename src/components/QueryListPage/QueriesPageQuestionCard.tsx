@@ -1,7 +1,8 @@
 import QuestionTag from '@/components/CategoryTag/CategoryTag';
+import { calculateDate } from '@/utils/utils';
 import { Divider } from 'antd';
 import { FunctionComponent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './QueriesPageQuestionCard.scss';
 
 interface QueriesPageQuestionCardProps {
@@ -29,20 +30,21 @@ const QueriesPageQuestionCard: FunctionComponent<
         <h2 className='card-title' onClick={handleOnClick}>
           {post?.title}
         </h2>
-        <p className='card-info'>
+        <div className='card-info'>
           <b>
             {post?.user.last_name} {post?.user.first_name}
           </b>
-          - May 04, 2022
-        </p>
+          <span
+            style={{ marginLeft: 2, fontStyle: 'italic' }}
+          >{` - ${calculateDate(post.created_at)}`}</span>
+        </div>
       </div>
       <Divider />
       <div className='card-content'>
         <p>{post?.content}</p>
         <div className='question-tags'>
-          <QuestionTag tagName={'math'} />
-          <QuestionTag tagName={'calculus'} />
-          <QuestionTag tagName={'integral'} />
+          {post.tags.length > 0 &&
+            post.tags.map((t: any) => <QuestionTag tagName={t} key={t} />)}
         </div>
       </div>
       <Divider />

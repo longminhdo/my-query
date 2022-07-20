@@ -12,12 +12,20 @@ import './MyUploadImage.scss';
 
 interface MyUploadImageProps {
   form: FormInstance;
+  initialImage?: any;
 }
 
-const MyUploadImage: FunctionComponent<MyUploadImageProps> = ({ form }) => {
+const MyUploadImage: FunctionComponent<MyUploadImageProps> = ({
+  form,
+  initialImage,
+}) => {
   const [resultUpload, setResultUpload] = useState();
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<any[]>(() =>
+    initialImage
+      ? [{ uid: '1', name: 'upload', status: 'done', url: initialImage }]
+      : []
+  );
 
   const beforeImageUpload = (file: any) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -61,8 +69,6 @@ const MyUploadImage: FunctionComponent<MyUploadImageProps> = ({ form }) => {
     }
 
     if (newFileList?.length === 0) {
-      console.log(resultUpload);
-      console.log('delete');
     }
 
     setFileList(newFileList);

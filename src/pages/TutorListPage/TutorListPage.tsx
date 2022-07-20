@@ -1,6 +1,7 @@
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
 import TutorListPageTutorCard from '@/components/TutorListPage/TutorListPageTutorCard';
 import { getAllTags } from '@/services/query.service';
+import { getAllTutors } from '@/services/tutor.service';
 import { SettingOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import {
@@ -26,6 +27,7 @@ import './TutorListPage.scss';
 interface TutorListPageProps {}
 
 const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
+  const [tutors, setTutors] = useState<any>([]);
   const [formSearch] = Form.useForm();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -42,13 +44,21 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
     const fetchTag = async () => {
       const res = await getAllTags();
       if (res?.data?.status_code === 1) {
-        console.log(res?.data?.data);
         setTags(res?.data?.data);
       }
     };
 
     fetchTag();
+    fetchTutor();
   }, []);
+
+  const fetchTutor = async () => {
+    const res = await getAllTutors();
+
+    if (res?.data?.status_code === 1) {
+      setTutors(res?.data?.data);
+    }
+  };
 
   /**
    * Drawers handle in MOBILE responsive
@@ -309,24 +319,9 @@ const TutorListPage: FunctionComponent<TutorListPageProps> = () => {
           )}
 
           <div className='tutor-list-page-content-main'>
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
-            <TutorListPageTutorCard />
+            {tutors?.map((el: any, index: number) => (
+              <TutorListPageTutorCard key={index} tutorInfo={el} />
+            ))}
           </div>
 
           <Pagination

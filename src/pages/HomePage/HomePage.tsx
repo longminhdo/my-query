@@ -1,45 +1,20 @@
-import { FunctionComponent, useEffect } from 'react';
-import { Row, Col, Divider } from 'antd';
-import { Icon } from '@iconify/react';
-import BackgroundImage from '@/assets/pictures/landing-img-1.jpeg';
 import Illustration1 from '@/assets/pictures/landing-illus-section-2_1.png';
 import Illustration2 from '@/assets/pictures/landing-illus-section-2_2.png';
 import Illustration3 from '@/assets/pictures/landing-illus-section-2_3.png';
+import BackgroundImage from '@/assets/pictures/landing-img-1.jpeg';
 import LandingPageQuestionCard from '@/components/LandingPages/LandingPageQuestionCard/LandingPageQuestionCard';
-import { routePaths } from '@/const/routePaths';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import LandingPageTutorCard from '@/components/LandingPages/LandingPageTutorCard/LandingPageTutorCard';
+import { routePaths } from '@/const/routePaths';
+import { Icon } from '@iconify/react';
+import { Col, Divider, message, Row } from 'antd';
+import { FunctionComponent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.scss';
 
 interface HomePageProps {}
 
 const HomePage: FunctionComponent<HomePageProps> = () => {
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const myUserId = localStorage.getItem('userId');
-  //   const myToken = localStorage.getItem('myQueryToken');
-
-  //   if (myToken && myUserId) {
-  //     getUser(myUserId).then((res) => {
-  //       const data = res?.data?.data[0];
-  //       console.log(data);
-  //       if (
-  //         !data.account_type ||
-  //         !data?.first_name ||
-  //         !data?.last_name ||
-  //         !data?.gender ||
-  //         !data?.phone ||
-  //         !data?.dob
-  //       ) {
-  //         navigate(routePaths.COMPLETE_PROFILE);
-  //       }
-  //     });
-  //   } else {
-  //     if (locationPath === routePaths.MESSENGER) {
-  //       navigate(routePaths.SIGN_IN_PAGE, { replace: true });
-  //     }
-  //   }
-  // }, []);
 
   return (
     <div className='home-page'>
@@ -61,9 +36,11 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
             <div
               className='first-section-btn'
               onClick={() => {
-                localStorage.setItem('accountType', 'student');
+                localStorage.setItem('accountType', 'Learner');
                 if (!localStorage.getItem('myQueryToken')) {
                   navigate(routePaths.SIGN_UP_PAGE, { replace: true });
+                } else {
+                  message.info('You have signed in.');
                 }
               }}
             >
@@ -72,9 +49,11 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
             <div
               className='first-section-btn'
               onClick={() => {
-                localStorage.setItem('accountType', 'tutor');
+                localStorage.setItem('accountType', 'Instructor');
                 if (!localStorage.getItem('myQueryToken')) {
                   navigate(routePaths.SIGN_UP_PAGE, { replace: true });
+                } else {
+                  message.info('You have signed in.');
                 }
               }}
             >

@@ -7,6 +7,7 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routePaths } from '@/const/routePaths';
 import './SignUpPage.scss';
+import { createWallet } from '@/services/wallet.service';
 
 interface SignUpPageProps {}
 
@@ -52,7 +53,6 @@ const SignUpPage: FunctionComponent<SignUpPageProps> = () => {
   }, []);
 
   const handleSignUp = async (v: any) => {
-    console.log(v);
     const body = { email: v.email, password: v.password, registry_by: 'email' };
     const res = await signUp(body);
 
@@ -82,6 +82,7 @@ const SignUpPage: FunctionComponent<SignUpPageProps> = () => {
     if (data.status_code === 1) {
       localStorage.setItem('myQueryToken', data?.data[0]?.access_token);
       localStorage.setItem('userId', data?.data[0]?.user_id);
+
       message.success('Success!');
       navigate(routePaths.COMPLETE_PROFILE, { replace: true });
     }
@@ -204,6 +205,8 @@ const SignUpPage: FunctionComponent<SignUpPageProps> = () => {
             className='main-form'
             layout={'vertical'}
             labelCol={{ style: { fontWeight: 700 } }}
+            onFinish={handleSignUp}
+            form={formSignUp}
           >
             <b>Welcome</b>
             <Item
@@ -238,7 +241,9 @@ const SignUpPage: FunctionComponent<SignUpPageProps> = () => {
               </Checkbox>
             </Form.Item>
 
-            <div className='sign-up-btn'>Sign Up</div>
+            <div className='sign-up-btn' onClick={() => formSignUp.submit()}>
+              Sign Up
+            </div>
 
             <Divider />
             <div className='sign-up-navigation'>

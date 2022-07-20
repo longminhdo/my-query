@@ -1,13 +1,16 @@
 import CategoryTag from '@/components/CategoryTag/CategoryTag';
 import { Divider } from 'antd';
 import { FunctionComponent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TutorListPageTutorCard.scss';
 
-interface TutorListPageTutorCardProps {}
+interface TutorListPageTutorCardProps {
+  tutorInfo: any;
+}
 
 const TutorListPageTutorCard: FunctionComponent<
   TutorListPageTutorCardProps
-> = () => {
+> = ({ tutorInfo }) => {
   const [isDesktop, setIsDesktop] = useState(() => {
     if (window.innerWidth < 768) {
       return false;
@@ -19,6 +22,7 @@ const TutorListPageTutorCard: FunctionComponent<
     const { innerWidth, innerHeight } = window;
     return { innerWidth, innerHeight };
   };
+  const navigate = useNavigate();
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
 
@@ -43,23 +47,27 @@ const TutorListPageTutorCard: FunctionComponent<
     };
   }, []);
 
+  const navigateToTutor = () => {
+    navigate(`/${tutorInfo.id}`, { replace: false });
+  };
+
   return isDesktop ? (
     <div className='tutor-list-page-tutor-card'>
       <div className='card-content'>
-        <img
-          src='https://thumbs.dreamstime.com/b/portrait-smiling-school-teacher-holding-books-classroom-77909586.jpg'
-          alt=''
-        />
-        <b className='tutor-name'>Veryveryveyryer log namemmsaksd </b>
-        <p> Rate: 8.5/10</p>
+        <img src={tutorInfo.avatar} alt='' />
+        <b
+          className='tutor-name'
+          onClick={() => navigateToTutor()}
+        >{`${tutorInfo.last_name} ${tutorInfo.first_name}`}</b>
+        <p> {`Rate: ${tutorInfo.rate}/10`}</p>
         <div className='tutor-tags'>
-          <CategoryTag tagName='math' />
-          <CategoryTag tagName='pascal' />
-          <CategoryTag tagName='C++' />
+          {tutorInfo.tags.map((tag: any) => (
+            <CategoryTag tagName={tag} key={tag} />
+          ))}
         </div>
         <div className='tutor-rewards'>
           <div className='tutor-rewards-item'>
-            <b> 53</b>
+            <b> {Math.floor(Math.random() * 100)}</b>
             <p>Student trained</p>
           </div>
           <Divider
@@ -67,7 +75,7 @@ const TutorListPageTutorCard: FunctionComponent<
             style={{ height: 80, borderColor: '#b5b5b5' }}
           />
           <div className='tutor-rewards-item'>
-            <b> 153</b>
+            <b> {Math.floor(Math.random() * 100)}</b>
             <p>Reviews received</p>
           </div>
         </div>
@@ -75,24 +83,18 @@ const TutorListPageTutorCard: FunctionComponent<
       </div>
     </div>
   ) : (
-    <div className='tutor-card-mobile'>
-      <img
-        src='https://thumbs.dreamstime.com/b/portrait-smiling-school-teacher-holding-books-classroom-77909586.jpg'
-        alt=''
-      />
+    <div className='tutor-card-mobile' onClick={() => navigateToTutor()}>
+      <img src={tutorInfo.avatar} alt='' />
       <div className='tutor-card-mobile-content'>
-        <b className='tutor-name-mobile'>Anasdasdasdasdasdadasdadasda</b>
-        <p> Rate: 8.5/10</p>
+        <b
+          className='tutor-name-mobile'
+          style={{ fontSize: 15 }}
+        >{`${tutorInfo.last_name} ${tutorInfo.first_name}`}</b>
+        <p> {`Rate: ${tutorInfo.rate}/10`}</p>
         <div className='tutor-tags-mobile'>
-          <CategoryTag tagName='math' />
-          <CategoryTag tagName='pascal' />
-          <CategoryTag tagName='C++' />
-          <CategoryTag tagName='C+asdasd+' />
-          <CategoryTag tagName='C++' />
-          <CategoryTag tagName='C++' />
-          <CategoryTag tagName='asdasd' />
-          <CategoryTag tagName='C++' />
-          <CategoryTag tagName='C++' />
+          {tutorInfo.tags.map((tag: any) => (
+            <CategoryTag tagName={tag} />
+          ))}
         </div>
       </div>
     </div>

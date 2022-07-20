@@ -14,7 +14,11 @@ const UploadPictureProfile: FunctionComponent<UploadPictureProfileProps> = ({
   form,
   size,
 }) => {
-  const [pictureProfile, setPictureProfile] = useState('');
+  const [pictureProfile, setPictureProfile] = useState(() =>
+    form.getFieldValue('pictureProfile')
+      ? form.getFieldValue('pictureProfile')
+      : ''
+  );
 
   const uploadPhotoHandler = async (e: any) => {
     const file = e.target.files[0];

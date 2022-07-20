@@ -1,5 +1,22 @@
 @import '@/styles/globalStyles.scss';
 
+.withdraw-btn {
+  user-select: none;
+  border-radius: 4px;
+  border: 1px solid $gray-color-3;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(0, 0, 0, 0.19);
+  transition: 0.3s ease-in-out;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(25, 25, 25, 0.2),
+      0 2px 5px 0px rgba(79, 79, 79, 0.19);
+  }
+}
+
 .user-detail-page {
   padding: 20px 0;
   position: relative;
@@ -45,6 +62,7 @@
         cursor: default;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         width: 100%;
         padding-top: 10px;
         padding-bottom: 20px;
@@ -143,6 +161,31 @@
         .chat-btn {
           border: 1px solid $gray-color-1;
         }
+      }
+    }
+  }
+
+  .wallet-deposit-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+    border-radius: 4px;
+
+    .wallet-deposit-item {
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      transition: 200ms;
+      height: 100%;
+
+      &:hover {
+        background-color: $gray-color-3;
+        cursor: pointer;
+        font-weight: 600;
       }
     }
   }

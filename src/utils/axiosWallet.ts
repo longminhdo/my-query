@@ -5,7 +5,6 @@ const axiosWallet = axios.create({
   headers: {
     // Overwrite Axios's automatically set Content-Type
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${window.localStorage.getItem('myQueryToken')}`,
   },
 });
 

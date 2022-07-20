@@ -23,6 +23,12 @@
     gap: 10px;
   }
 
+  .question-card-image {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
   .question-card-functions {
     display: flex;
     gap: 8px;
@@ -59,7 +65,7 @@
         border-radius: 4px;
         gap: 8px;
         font-weight: 400;
-
+        user-select: none;
         box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(0, 0, 0, 0.19);
         transition: 0.3s ease-in-out;
 
@@ -73,6 +79,11 @@
       .edit-btn {
         border: 1px solid $gray-color-1;
         padding-right: 10px;
+      }
+
+      .save-btn {
+        border: 1px solid $gray-color-1;
+        // padding-right: 10px;
       }
     }
   }

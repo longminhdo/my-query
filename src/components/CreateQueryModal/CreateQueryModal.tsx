@@ -1,34 +1,64 @@
 import MyUploadImage from '@/components/MyUploadImage/MyUploadImage';
 import TagsDropDown from '@/components/TagsDropDown/TagsDropDown';
+import { addTagToQuery, createNewQuery } from '@/services/query.service';
 import { PictureOutlined, TagsOutlined } from '@ant-design/icons';
 import { Form, Input } from 'antd';
+import moment from 'moment';
 import { FunctionComponent, useState } from 'react';
 import './CreateQueryModal.scss';
 
 interface CreateQueryModalProps {
   tags?: any;
+  callback?: any;
+  closeModal?: any;
+  setIsDestroyOnClose?: any;
 }
 
 const { Item } = Form;
 
 const CreateQueryModal: FunctionComponent<CreateQueryModalProps> = ({
   tags,
+  callback,
+  closeModal,
 }) => {
   const [formCreate] = Form.useForm();
   const [isTagSelectVisible, setIsTagSelectVisible] = useState(false);
   const [isUploadMediaShown, setIsUploadMediaShown] = useState(false);
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = async (values: any) => {
+    const data = {
+      title: values.title,
+      content: values.mainQuery,
+      image_url: values?.image?.cloudinaryResponse?.secure_url,
+      created_at: moment().unix(),
+    };
+
+    if (!values?.image?.cloudinaryResponse?.secure_url) {
+      delete data.image_url;
+    }
+
+    const res = await createNewQuery(
+      data,
+      localStorage.getItem('myQueryToken') as string
+    );
+
+    if (res?.data?.status_code === 1) {
+      const tagBody = {
+        tags: values.tagDropDown,
+        post_id: res?.data?.data[0],
+      };
+
+      addTagToQuery(tagBody, localStorage.getItem('myQueryToken')).then(
+        (res) => {
+          if (res?.data?.status_code === 1) {
+            callback((prev: any) => !prev);
+            closeModal(false);
+            formCreate.resetFields();
+          }
+        }
+      );
+    }
   };
-
-  /**
-   * Upload img
-   */
-
-  /**
-   * Upload img
-   */
 
   return (
     <div className='create-query-modal'>
@@ -44,9 +74,7 @@ const CreateQueryModal: FunctionComponent<CreateQueryModalProps> = ({
           ></Input.TextArea>
         </Item>
 
-        {isTagSelectVisible ? (
-          <TagsDropDown form={formCreate} tags={tags} />
-        ) : null}
+        {isTagSelectVisible ? <TagsDropDown tags={tags} /> : null}
 
         {isUploadMediaShown ? <MyUploadImage form={formCreate} /> : null}
 
