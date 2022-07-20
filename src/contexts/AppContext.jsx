@@ -1,28 +1,29 @@
-import { getUser } from "@/services/auth.service";
-import { createContext, useEffect, useState } from "react";
-import { StreamChat } from "stream-chat";
+import { getUser } from '@/services/auth.service';
+import { createContext, useEffect, useState } from 'react';
+import { StreamChat } from 'stream-chat';
 
 const AppContext = createContext();
+const apiKey = process.env.REACT_APP_STREAM_API_KEY;
+const client = StreamChat.getInstance(apiKey);
 
+console.log(apiKey);
 const ContextProvider = ({ children }) => {
   const [user, setUser] = useState();
-  const apiKey = process.env.REACT_APP_STREAM_API_KEY || "";
-  const client = StreamChat.getInstance(apiKey);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId") || "";
-    const chatToken = localStorage.getItem("chatToken") || "";
+    const userId = localStorage.getItem('userId');
+    const chatToken = localStorage.getItem('chatToken');
     if (userId) {
       getUser(userId)
         .then((res) => {
-          const user = res.data.data[0];
-          if (Object.keys(user).length > 0) {
-            setUser(user);
+          const currentUser = res.data.data[0];
+          if (Object.keys(currentUser).length > 0) {
+            setUser(currentUser);
             client.connectUser(
               {
                 id: userId,
-                name: user?.email,
-                image: user?.avatar,
+                name: currentUser?.email,
+                image: currentUser?.avatar,
               },
               chatToken
             );

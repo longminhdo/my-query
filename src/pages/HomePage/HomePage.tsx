@@ -4,10 +4,13 @@ import Illustration3 from '@/assets/pictures/landing-illus-section-2_3.png';
 import BackgroundImage from '@/assets/pictures/landing-img-1.jpeg';
 import LandingPageQuestionCard from '@/components/LandingPages/LandingPageQuestionCard/LandingPageQuestionCard';
 import LandingPageTutorCard from '@/components/LandingPages/LandingPageTutorCard/LandingPageTutorCard';
+import QueriesPageQuestionCard from '@/components/QueryListPage/QueriesPageQuestionCard';
 import { routePaths } from '@/const/routePaths';
+import { getAllPosts } from '@/services/query.service';
+import { getAllTutors } from '@/services/tutor.service';
 import { Icon } from '@iconify/react';
 import { Col, Divider, message, Row } from 'antd';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.scss';
 
@@ -15,6 +18,29 @@ interface HomePageProps {}
 
 const HomePage: FunctionComponent<HomePageProps> = () => {
   const navigate = useNavigate();
+  const [posts, setPosts] = useState<any>([]);
+  const [tutors, setTutors] = useState<any>([]);
+
+  const fetchThreeQueries = async () => {
+    const res = await getAllPosts();
+
+    if (res?.data?.status_code === 1) {
+      setPosts(res?.data?.data.slice(0, 3));
+    }
+  };
+
+  const fetchThreeTutors = async () => {
+    const res = await getAllTutors();
+
+    if (res?.data?.status_code === 1) {
+      setTutors(res?.data?.data.slice(0, 3));
+    }
+  };
+
+  useEffect(() => {
+    fetchThreeQueries();
+    fetchThreeTutors();
+  }, []);
 
   return (
     <div className='home-page'>
@@ -97,9 +123,9 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
       <div className='third-section'>
         <h1>Query for you</h1>
         <div className='third-section-content'>
-          <LandingPageQuestionCard />
-          <LandingPageQuestionCard />
-          <LandingPageQuestionCard />
+          {posts?.map((p: any, index: number) => (
+            <LandingPageQuestionCard post={p} key={index} />
+          ))}
           <Divider
             style={{
               borderTopColor: '#1C1D1F',
@@ -125,15 +151,12 @@ const HomePage: FunctionComponent<HomePageProps> = () => {
       <div className='fourth-section'>
         <h1>Tutor for you</h1>
         <Row className='fourth-section-content' gutter={[0, 13]}>
-          <Col className='fourth-section-segment' xs={24} xl={8}>
-            <LandingPageTutorCard />
-          </Col>
-          <Col className='fourth-section-segment' xs={24} xl={8}>
-            <LandingPageTutorCard />
-          </Col>
-          <Col className='fourth-section-segment' xs={24} xl={8}>
-            <LandingPageTutorCard />
-          </Col>
+          {tutors?.map((t: any, index: number) => (
+            <Col className='fourth-section-segment' xs={24} xl={8} key={index}>
+              <LandingPageTutorCard tutor={t} />
+            </Col>
+          ))}
+
           <Divider
             style={{
               borderTopColor: '#1C1D1F',

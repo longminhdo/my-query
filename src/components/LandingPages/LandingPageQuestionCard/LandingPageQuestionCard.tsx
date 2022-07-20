@@ -1,46 +1,49 @@
 import QuestionTag from '@/components/CategoryTag/CategoryTag';
+import { calculateDate } from '@/utils/utils';
 import { Divider } from 'antd';
 import { FunctionComponent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LandingPageQuestionCard.scss';
 
-interface LandingPageQuestionCardProps {}
+interface LandingPageQuestionCardProps {
+  post: any;
+}
 
 const LandingPageQuestionCard: FunctionComponent<
   LandingPageQuestionCardProps
-> = () => {
+> = ({ post }) => {
+  const navigate = useNavigate();
   const handleOnClick = () => {
-    //navigate to
+    navigate(`/query/${post?.id}`);
   };
+  console.log(post);
 
   return (
     <div className='landing-page-question-card'>
       <div className='question-card-header'>
         <h2 className='card-title' onClick={handleOnClick}>
-          Title
+          {post?.title}
         </h2>
-        <p className='card-info'>
-          <b>Ambert</b> - May 04, 2022
-        </p>
+        <div className='card-info'>
+          <b>{`${post?.user?.last_name} ${post?.user?.first_name}`}</b>
+          <span> - </span>
+          <span>{calculateDate(post?.created_at)}</span>
+        </div>
       </div>
       <Divider />
       <div className='card-content'>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia a
-          quam omnis, exercitationem similique ipsa quas beatae, non, nesciunt
-          nisi recusandae. Ducimus illo nam sapiente suscipit eaque, incidunt
-          laudantium non?
-        </p>
+        <p>{post?.content}</p>
         <div className='question-tags'>
-          <QuestionTag tagName={'math'} />
-          <QuestionTag tagName={'calculus'} />
-          <QuestionTag tagName={'integral'} />
+          {post?.tags.map((el: any) => (
+            <QuestionTag tagName={el} key={el} />
+          ))}
         </div>
       </div>
       <Divider />
       <div className='question-react-info-field'>
-        <span className='question-react-info'>5033 Up votes</span>
-        <span className='question-react-info'> 3 Down votes</span>
-        <span className='question-react-info'> 54 Comments</span>
+        <span className='question-react-info'>{post?.upvote} Up votes</span>
+        <span className='question-react-info'>{post?.downvote} Down votes</span>
+        <span className='question-react-info'> {post?.comments} Comments</span>
       </div>
     </div>
   );

@@ -1,30 +1,36 @@
 import CategoryTag from '@/components/CategoryTag/CategoryTag';
+import { DEFAULT_AVATAR } from '@/const/const';
 import { Divider } from 'antd';
 import { FunctionComponent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LandingPageTutorCard.scss';
 
-interface LandingPageTutorCardProps {}
+interface LandingPageTutorCardProps {
+  tutor: any;
+}
 
-const LandingPageTutorCard: FunctionComponent<
-  LandingPageTutorCardProps
-> = () => {
+const LandingPageTutorCard: FunctionComponent<LandingPageTutorCardProps> = ({
+  tutor,
+}) => {
+  const navigate = useNavigate();
   const handleOnClick = () => {
-    //navigate to
+    navigate(`/${tutor?.id}`);
   };
+
+  console.log(tutor);
 
   return (
     <div className='landing-page-tutor-card'>
       <div className='card-content'>
-        <img
-          src='https://thumbs.dreamstime.com/b/portrait-smiling-school-teacher-holding-books-classroom-77909586.jpg'
-          alt=''
-        />
-        <b className='tutor-name'>Ana</b>
+        <img src={tutor?.avatar ? tutor?.avatar : DEFAULT_AVATAR} alt='' />
+        <b className='tutor-name' onClick={() => handleOnClick()}>
+          {tutor?.last_name}
+        </b>
         <p> Rate: 8.5/10</p>
         <div className='tutor-tags'>
-          <CategoryTag tagName='math' />
-          <CategoryTag tagName='pascal' />
-          <CategoryTag tagName='C++' />
+          {tutor?.tags?.map((t: any) => (
+            <CategoryTag tagName={t} key={t} />
+          ))}
         </div>
         <div className='tutor-rewards'>
           <div className='tutor-rewards-item'>

@@ -122,7 +122,6 @@ const TeamChannelHeader = ({ setIsEditing, startCall }) => {
         <p className="team-channel-header__right-text">
           {getWatcherText(watcher_count)}
         </p>
-        <button onClick={startCall}>Call</button>
       </div>
     </div>
   );
